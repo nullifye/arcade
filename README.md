@@ -27,9 +27,8 @@ Games can live on any host (GitHub Pages, Vercel, …), so nothing relies on one
   only store.
   - `arked.profile`: `{ playerId, nickname, userType, campus }`
   - `arked.game.<id>`: `{ lastPlayedAt, daily: { date, status: 'playing' | 'done', won?, score? } | null }`
-- **Combined points:** `supabase/arked.sql`, in the same Supabase project as Teka Kata.
-  Teka Kata's rounds are copied in by a trigger on `cg_scores`. Other games call
-  `arked_record(p_player_id, p_game, p_points, p_seconds)`. The hub reads
+- **Combined points:** `supabase/arked.sql`. Every game, Teka Kata included, reports each
+  round with `arked_record` (warga-games `shared/leaderboard.js`). The hub reads
   `arked_player_summary(p_player_id)`.
 
 ## Adding a game
@@ -48,8 +47,18 @@ too: copy `js/shared-store.js`, honour `?dari=arked`, and call `arked_record`.
 ## Boards for every game
 
 `supabase/arked.sql` keeps every round of every game in `arked_plays` (with the player's
-nickname, category and campus), so any game gets Hari Ini / Keseluruhan / Kampus boards from
-`arked_top(p_game, …)` and `arked_campus_rank(p_game, …)`. `p_game` null covers all games.
+nickname, category and campus), so every game gets the same Hari Ini / Keseluruhan / Kampus
+boards from `arked_top(p_game, …)` and `arked_campus_rank(p_game, …)`. `p_game` null covers
+all games.
+
+- `arked_record(…, p_daily, p_play_date)`: a game with a daily challenge (Teka Kata) sends
+  `p_daily = true`; the database allows one per player, game and day.
+- Each game's points are capped per round (`arked_games.max_points`, `max_points_per_sec`).
+
+Teka Kata used its own `cg_scores` table and `cg_*` functions before. `arked.sql` copies those
+rounds in (and keeps copying any an old cached Teka Kata page still sends). Once the new Teka
+Kata is live, `supabase/retire-cg-scores.sql` removes `cg_scores` and the `cg_*` functions; it
+refuses if any old round isn't in `arked_plays`.
 
 ## Files kept in step with warga-games
 
@@ -59,7 +68,7 @@ dialogs, dropdown) are copies of `warga-games/shared/`. Change them in both repo
 
 ## Setup
 
-1. Run `supabase/arked.sql` in the Supabase SQL Editor (after Teka Kata's `schema.sql`).
+1. Run `supabase/arked.sql` in the Supabase SQL Editor.
 2. In AppsWarga's Mini Apps manager, for the Arked Warga listing:
    - start URL `https://nullifye.github.io/arcade/`;
    - allowed hosts: every game host (`nullifye.github.io` for now);

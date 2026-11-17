@@ -1,4 +1,4 @@
-// Player profile choices. `value`s for user types must match the check constraint in supabase/schema.sql.
+// Player profile choices. `value`s for user types must match the user_type checks in the hub's supabase/arked.sql.
 
 export const USER_TYPES = [
   { value: 'pelajar', label: 'Pelajar' },

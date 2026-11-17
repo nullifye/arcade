@@ -1,9 +1,13 @@
--- Arked Warga: every game's rounds in one table, for combined points and per-game boards.
--- Run in the Supabase SQL editor of the same project as Teka Kata, AFTER Teka Kata's
--- supabase/schema.sql (it reads public.cg_scores). Safe to re-run, and it upgrades a database
--- that ran the first version of this file (no per-game bounds, no profile on rounds).
+-- Arked Warga: every game's rounds in one table, for combined points and per-game boards
+-- (Hari Ini, Keseluruhan, Kampus). Every game, Teka Kata included, records rounds with
+-- arked_record and reads boards with arked_top / arked_campus_rank.
 --
--- Security model (as for cg_scores):
+-- Run in the Supabase SQL editor. Safe to re-run. It also upgrades a database that ran an
+-- earlier version of this file, and, while Teka Kata's old public.cg_scores table still
+-- exists, copies its rounds in (and keeps copying any that older Teka Kata pages still send).
+-- Once that's done, supabase/retire-cg-scores.sql removes the old cg_* table and functions.
+--
+-- Security model:
 --   * RLS is on and there are NO table policies, so anon/authenticated can't read or write
 --     the tables directly (player_id stays private).
 --   * The browser can only call these SECURITY DEFINER functions:
@@ -11,8 +15,8 @@
 --       arked_player_summary  one player's points, play time and rounds, per game (the hub)
 --       arked_top             players by points: one game or all, one day or all time
 --       arked_campus_rank     campuses by points: one game or all
---   * Teka Kata doesn't call arked_record: a trigger copies each of its rounds from cg_scores.
---   * Games are client-trusted, so the checks bound abuse; they can't fully prevent it.
+--   * Games are client-trusted (points and time come from the browser), so the checks bound
+--     abuse; they can't fully prevent it.
 
 -- ---------------------------------------------------------------- tables
 
@@ -32,7 +36,9 @@ alter table public.arked_games
   add column if not exists max_points_per_sec int not null default 1000 check (max_points_per_sec >= 1);
 
 insert into public.arked_games (id, name, max_points, max_points_per_sec) values
-  ('teka-kata', 'Teka Kata UiTM', 100000, 1000),
+  -- Teka Kata: the longest phrase hides 36 letters, worth at most 4,500; the fastest time
+  -- (half a second a letter) gives 250 a second. Room left for longer phrases.
+  ('teka-kata', 'Teka Kata UiTM', 10000, 260),
   -- Ular: 15 points a food with walls on, a 20×20 board holds at most 397 foods.
   ('ular',      'Ular',           6000,   75)
 on conflict (id) do update
@@ -51,26 +57,37 @@ create table if not exists public.arked_plays (
   game        text        not null references public.arked_games (id),
   points      int         not null check (points between 0 and 100000),
   seconds     int         not null check (seconds between 0 and 86400),
-  -- The row's id in the game's own table (cg_scores.id for Teka Kata), so copies happen once.
+  -- A game's daily challenge round: one per player, game and day.
+  daily       boolean     not null default false,
+  -- The row's id in Teka Kata's old cg_scores table, so each is copied once. Null otherwise.
   source_id   bigint
 );
 
--- Upgrade from the first version of this file, whose rounds had no date or profile. Its rounds
--- are all Teka Kata copies, so they take the date and profile from their cg_scores row.
+-- Upgrade from earlier versions of this file (no date, profile or daily flag on rounds).
 alter table public.arked_plays
   add column if not exists play_date date,
   add column if not exists nickname  text check (char_length(nickname) between 1 and 20),
   add column if not exists user_type text check (user_type in ('pelajar', 'staf', 'alumni', 'awam')),
-  add column if not exists campus    text check (char_length(campus) between 1 and 60);
+  add column if not exists campus    text check (char_length(campus) between 1 and 60),
+  add column if not exists daily     boolean not null default false;
 
-update public.arked_plays p
-set play_date = coalesce(p.play_date, s.play_date),
-    nickname  = coalesce(p.nickname,  s.nickname),
-    user_type = coalesce(p.user_type, s.user_type),
-    campus    = coalesce(p.campus,    s.campus)
-from public.cg_scores s
-where p.game = 'teka-kata' and p.source_id = s.id
-  and (p.play_date is null or p.nickname is null or p.user_type is null or p.campus is null);
+-- Copies of Teka Kata rounds take their date, profile and mode from their cg_scores row.
+do $$
+begin
+  if to_regclass('public.cg_scores') is not null then
+    update public.arked_plays p
+    set play_date = coalesce(p.play_date, s.play_date),
+        nickname  = coalesce(p.nickname,  s.nickname),
+        user_type = coalesce(p.user_type, s.user_type),
+        campus    = coalesce(p.campus,    s.campus),
+        daily     = (s.mode = 'daily')
+    from public.cg_scores s
+    where p.game = 'teka-kata' and p.source_id = s.id
+      and (p.play_date is null or p.nickname is null or p.user_type is null or p.campus is null
+           or p.daily is distinct from (s.mode = 'daily'));
+  end if;
+end;
+$$;
 
 -- Anything left without a profile (not expected) gets a neutral one rather than being deleted.
 update public.arked_plays
@@ -100,12 +117,17 @@ create index if not exists arked_plays_player
 -- Hari Ini boards: one day's rows.
 create index if not exists arked_plays_day
   on public.arked_plays (play_date, game);
--- Each copied source row at most once (the trigger and the backfill below).
+-- One daily challenge round per player, game and day (also arked_record's duplicate check).
+create unique index if not exists arked_plays_daily_once
+  on public.arked_plays (player_id, game, play_date) where daily;
+-- Each copied cg_scores row at most once.
 create unique index if not exists arked_plays_source
   on public.arked_plays (game, source_id) where source_id is not null;
 
--- ---------------------------------------------------------------- Teka Kata (cg_scores)
+-- ---------------------------------------------------------------- Teka Kata's old table
 
+-- While cg_scores exists: copy its rounds, and keep copying any an older (cached) Teka Kata
+-- page still sends through cg_submit. supabase/retire-cg-scores.sql removes all of this.
 create or replace function public.arked_copy_cg_score()
 returns trigger
 language plpgsql
@@ -114,10 +136,10 @@ set search_path = ''
 as $$
 begin
   insert into public.arked_plays
-    (created_at, play_date, player_id, nickname, user_type, campus, game, points, seconds, source_id)
+    (created_at, play_date, player_id, nickname, user_type, campus, game, points, seconds, daily, source_id)
   values
     (new.created_at, new.play_date, new.player_id, new.nickname, new.user_type, new.campus,
-     'teka-kata', least(new.score, 100000), new.seconds, new.id)
+     'teka-kata', least(new.score, 100000), new.seconds, new.mode = 'daily', new.id)
   on conflict do nothing;
   return new;
 end;
@@ -125,29 +147,39 @@ $$;
 
 revoke all on function public.arked_copy_cg_score() from public, anon, authenticated;
 
-drop trigger if exists arked_from_cg_scores on public.cg_scores;
-create trigger arked_from_cg_scores
-  after insert on public.cg_scores
-  for each row execute function public.arked_copy_cg_score();
+do $$
+begin
+  if to_regclass('public.cg_scores') is not null then
+    drop trigger if exists arked_from_cg_scores on public.cg_scores;
+    create trigger arked_from_cg_scores
+      after insert on public.cg_scores
+      for each row execute function public.arked_copy_cg_score();
 
--- Rounds recorded before this file was run.
-insert into public.arked_plays
-  (created_at, play_date, player_id, nickname, user_type, campus, game, points, seconds, source_id)
-select s.created_at, s.play_date, s.player_id, s.nickname, s.user_type, s.campus,
-       'teka-kata', least(s.score, 100000), s.seconds, s.id
-from public.cg_scores s
-on conflict do nothing;
+    insert into public.arked_plays
+      (created_at, play_date, player_id, nickname, user_type, campus, game, points, seconds, daily, source_id)
+    select s.created_at, s.play_date, s.player_id, s.nickname, s.user_type, s.campus,
+           'teka-kata', least(s.score, 100000), s.seconds, s.mode = 'daily', s.id
+    from public.cg_scores s
+    on conflict do nothing;
+  end if;
+end;
+$$;
 
 -- ---------------------------------------------------------------- functions
 
 drop function if exists public.arked_record(uuid, text, int, int);
 drop function if exists public.arked_record(uuid, text, int, int, text, text, text);
+drop function if exists public.arked_record(uuid, text, int, int, text, text, text, boolean, date);
 drop function if exists public.arked_player_summary(uuid);
 drop function if exists public.arked_top(text, uuid, date, int);
 drop function if exists public.arked_campus_rank(text, int);
 drop function if exists public.arked_player_totals(text, date);
 
 -- A game reports one finished round, with the player's current profile.
+--   p_daily      true for a daily challenge round: at most one per player, game and day
+--                (a second one fails with code 23505).
+--   p_play_date  the round's day (YYYY-MM-DD, Malaysia); null = today. Must be within a day
+--                of today, so a daily challenge started just before midnight still counts.
 create function public.arked_record(
   p_player_id  uuid,
   p_game       text,
@@ -155,7 +187,9 @@ create function public.arked_record(
   p_seconds    int,
   p_nickname   text,
   p_user_type  text,
-  p_campus     text
+  p_campus     text,
+  p_daily      boolean default false,
+  p_play_date  date    default null
 )
 returns void
 language plpgsql
@@ -163,13 +197,16 @@ security definer
 set search_path = ''
 as $$
 declare
-  v_game public.arked_games;
+  v_game  public.arked_games;
+  v_today date := (now() at time zone 'Asia/Kuala_Lumpur')::date;
+  v_date  date := coalesce(p_play_date, (now() at time zone 'Asia/Kuala_Lumpur')::date);
+  v_daily boolean := coalesce(p_daily, false);
 begin
   if p_player_id is null then
     raise exception 'Data permainan tidak sah' using errcode = '22023';
   end if;
   select * into v_game from public.arked_games g where g.id = p_game;
-  if not found or p_game = 'teka-kata' then
+  if not found then
     raise exception 'Permainan tidak dikenali' using errcode = '22023';
   end if;
   if char_length(btrim(coalesce(p_nickname, ''))) not between 1 and 20
@@ -177,11 +214,21 @@ begin
      or char_length(btrim(coalesce(p_campus, ''))) not between 1 and 60 then
     raise exception 'Profil tidak sah' using errcode = '22023';
   end if;
+  if v_date not between v_today - 1 and v_today + 1 then
+    raise exception 'Tarikh permainan tidak sah' using errcode = '22023';
+  end if;
   if p_points is null or p_seconds is null
      or p_points not between 0 and v_game.max_points
      or p_seconds not between 1 and 86400
      or p_points > p_seconds::bigint * v_game.max_points_per_sec then
     raise exception 'Markah tidak munasabah' using errcode = '22023';
+  end if;
+  -- Before the rate limit, so a retried daily round gets "already recorded", not "too often".
+  if v_daily and exists (
+    select 1 from public.arked_plays p
+    where p.player_id = p_player_id and p.game = p_game and p.daily and p.play_date = v_date
+  ) then
+    raise exception 'Markah Cabaran Harian sudah direkodkan' using errcode = '23505';
   end if;
   -- At most one round per player per game every 10 seconds.
   if exists (
@@ -191,8 +238,10 @@ begin
   ) then
     raise exception 'Terlalu kerap. Cuba sebentar lagi.' using errcode = '54000';
   end if;
-  insert into public.arked_plays (player_id, nickname, user_type, campus, game, points, seconds)
-  values (p_player_id, btrim(p_nickname), p_user_type, btrim(p_campus), p_game, p_points, p_seconds);
+  insert into public.arked_plays
+    (play_date, player_id, nickname, user_type, campus, game, points, seconds, daily)
+  values
+    (v_date, p_player_id, btrim(p_nickname), p_user_type, btrim(p_campus), p_game, p_points, p_seconds, v_daily);
 end;
 $$;
 
@@ -214,7 +263,7 @@ $$;
 
 -- Every player's totals for one game (or all, p_game null) over one day (p_play_date) or
 -- all time (null), ranked: points, then less time, then who played first. Nickname, type
--- and campus are from the player's latest round in the range. Internal, like cg_player_totals.
+-- and campus are from the player's latest round in the range. Internal.
 create function public.arked_player_totals(p_game text, p_play_date date)
 returns table (
   rank           bigint,
@@ -310,11 +359,11 @@ $$;
 -- ---------------------------------------------------------------- access
 
 revoke all on function public.arked_player_totals(text, date) from public, anon, authenticated;
-revoke all on function public.arked_record(uuid, text, int, int, text, text, text) from public;
+revoke all on function public.arked_record(uuid, text, int, int, text, text, text, boolean, date) from public;
 revoke all on function public.arked_player_summary(uuid) from public;
 revoke all on function public.arked_top(text, uuid, date, int) from public;
 revoke all on function public.arked_campus_rank(text, int) from public;
-grant execute on function public.arked_record(uuid, text, int, int, text, text, text) to anon, authenticated;
+grant execute on function public.arked_record(uuid, text, int, int, text, text, text, boolean, date) to anon, authenticated;
 grant execute on function public.arked_player_summary(uuid) to anon, authenticated;
 grant execute on function public.arked_top(text, uuid, date, int) to anon, authenticated;
 grant execute on function public.arked_campus_rank(text, int) to anon, authenticated;
