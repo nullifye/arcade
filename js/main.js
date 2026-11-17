@@ -2,7 +2,7 @@
 import { GAMES, launchUrl } from './games.js';
 import { fetchSummary, pointsConfigured } from './points.js';
 import { PROFILE_KEY, gameKey, migrateLocal, readShared, syncShared, writeShared } from './shared-store.js';
-import { dailyLine, formatPlayTime, formatPoints, timeAgo, todayKL } from './format.js';
+import { formatPlayTime, formatPoints, timeAgo } from './format.js';
 import { USER_TYPES, CAMPUSES, NON_UITM_CAMPUS, userTypeLabel } from './profile-options.js';
 import { enhanceSelect, refreshSelect, closeSelectSheet } from './select.js';
 import {
@@ -198,7 +198,6 @@ function play(game) {
 }
 
 function renderGrid() {
-  const today = todayKL();
   const grid = $('#game-grid');
   grid.replaceChildren();
   for (const g of GAMES) {
@@ -217,8 +216,6 @@ function renderGrid() {
     body.append(tags);
     li.append(icon, body);
     if (live) {
-      const line = dailyLine(g, readShared(gameKey(g.id)), today);
-      if (line) body.append(h('p', 'game-status', line));
       const btn = h('button', 'btn btn-primary game-play', 'Main');
       btn.type = 'button';
       btn.setAttribute('aria-label', `Main ${g.name}`);
@@ -241,17 +238,10 @@ function renderContinue() {
   card.hidden = !best;
   if (!best) return;
   const { g, rec } = best;
-  const today = todayKL();
   $('#continue-icon').src = g.icon;
   $('#continue-name').textContent = g.name;
   $('#continue-meta').textContent = `Dimainkan ${timeAgo(rec.lastPlayedAt)}`;
-  const daily = dailyLine(g, rec, today);
-  $('#continue-daily').textContent = daily;
-  $('#continue-daily').hidden = !daily;
-  const playing = rec.daily?.date === today && rec.daily.status === 'playing';
-  const btn = $('#continue-btn');
-  btn.textContent = playing ? 'Sambung' : 'Main';
-  btn.onclick = () => play(g);
+  $('#continue-btn').onclick = () => play(g);
 }
 
 // ---------- points ----------

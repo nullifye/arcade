@@ -7,7 +7,6 @@
 //   icon    square image in this repo (icons/), shown at 56 px
 //   tags    up to 3 short labels
 //   status  'live' (playable) or 'soon' (an "Akan Datang" card, not playable)
-//   daily   true if the game writes a daily-challenge status to arked.game.<id>
 
 export const GAMES = [
   {
@@ -16,18 +15,8 @@ export const GAMES = [
     desc: 'Pecahkan kod nombor dan temui frasa tentang UiTM dan Malaysia.',
     url: 'https://nullifye.github.io/warga-games/teka-kata/',
     icon: 'icons/teka-kata.svg',
-    tags: ['Kata', 'Cabaran Harian'],
+    tags: ['Kata', 'Kriptogram'],
     status: 'live',
-    daily: true,
-  },
-  {
-    id: 'silang-kata',
-    name: 'Silang Kata',
-    desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
-    url: null,
-    icon: 'icons/silang-kata.svg',
-    tags: ['Kata'],
-    status: 'soon',
   },
   {
     id: 'ular',
@@ -37,6 +26,15 @@ export const GAMES = [
     icon: 'icons/ular.svg',
     tags: ['Arked', 'Refleks'],
     status: 'live',
+  },
+  {
+    id: 'silang-kata',
+    name: 'Silang Kata',
+    desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
+    url: null,
+    icon: 'icons/silang-kata.svg',
+    tags: ['Kata'],
+    status: 'soon',
   },
   {
     id: 'susun-nombor',

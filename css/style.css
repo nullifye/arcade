@@ -833,11 +833,6 @@ html.appswarga-fullscreen.aw-close-visible .screen {
   color: var(--ink-2);
 }
 
-.continue-text .continue-daily {
-  color: var(--primary);
-  font-weight: 600;
-}
-
 .continue-card .btn {
   flex: none;
   padding: 10px 16px;
@@ -910,13 +905,6 @@ html.appswarga-fullscreen.aw-close-visible .screen {
 .game-tags .tag {
   font-size: 0.66rem;
   padding: 3px 8px;
-}
-
-.game-status {
-  margin: 8px 0 0;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--primary);
 }
 
 .game-play {

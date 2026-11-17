@@ -1,15 +1,5 @@
 // Small formatting helpers for the hub (no DOM, so they're unit-tested).
 
-/** Today's date in Malaysia as YYYY-MM-DD (the games' daily challenges roll over at midnight MYT). */
-export function todayKL(date = new Date()) {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Kuala_Lumpur',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(date);
-}
-
 /** "baru sahaja", "5 minit lalu", "3 jam lalu", "semalam", "4 hari lalu". */
 export function timeAgo(ms, now = Date.now()) {
   const min = Math.floor((now - ms) / 60000);
@@ -31,13 +21,4 @@ export function formatPlayTime(seconds) {
 }
 
 export const formatPoints = (n) => new Intl.NumberFormat('ms-MY').format(n);
-
-/** One line about today's daily challenge, from a game's arked.game.<id> record. */
-export function dailyLine(game, record, today) {
-  if (!game.daily) return '';
-  const d = record?.daily;
-  if (d?.date !== today) return 'Cabaran Harian baharu menanti';
-  if (d.status === 'playing') return 'Cabaran Harian sedang berjalan';
-  return d.won ? `Cabaran Harian selesai · ${formatPoints(d.score ?? 0)} mata` : 'Cabaran Harian: cuba lagi esok';
-}
 

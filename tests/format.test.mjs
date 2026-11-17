@@ -1,11 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { dailyLine, formatPlayTime, timeAgo, todayKL } from '../js/format.js';
-
-test('todayKL rolls over at midnight Malaysia time', () => {
-  assert.equal(todayKL(new Date('2026-11-17T15:59:00Z')), '2026-11-17');
-  assert.equal(todayKL(new Date('2026-11-17T16:00:00Z')), '2026-11-18');
-});
+import { formatPlayTime, formatPoints, timeAgo } from '../js/format.js';
 
 test('timeAgo', () => {
   const now = Date.UTC(2026, 10, 17, 12);
@@ -22,13 +17,6 @@ test('formatPlayTime', () => {
   assert.equal(formatPlayTime(3 * 3600 + 5 * 60), '3j 05m');
 });
 
-test('dailyLine', () => {
-  const g = { daily: true };
-  const today = '2026-11-17';
-  assert.equal(dailyLine({}, null, today), '');
-  assert.equal(dailyLine(g, null, today), 'Cabaran Harian baharu menanti');
-  assert.equal(dailyLine(g, { daily: { date: '2026-11-16', status: 'done', won: true, score: 9 } }, today), 'Cabaran Harian baharu menanti');
-  assert.equal(dailyLine(g, { daily: { date: today, status: 'playing' } }, today), 'Cabaran Harian sedang berjalan');
-  assert.match(dailyLine(g, { daily: { date: today, status: 'done', won: true, score: 1250 } }, today), /^Cabaran Harian selesai · 1.250 mata$/);
-  assert.equal(dailyLine(g, { daily: { date: today, status: 'done', won: false } }, today), 'Cabaran Harian: cuba lagi esok');
+test('formatPoints groups thousands', () => {
+  assert.match(formatPoints(2830), /^2[.,]830$/);
 });
