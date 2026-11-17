@@ -1,6 +1,7 @@
 -- Arked Warga: every game's rounds in one table, for combined points and per-game boards.
 -- Run in the Supabase SQL editor of the same project as Teka Kata, AFTER Teka Kata's
--- supabase/schema.sql (it reads public.cg_scores). Safe to re-run.
+-- supabase/schema.sql (it reads public.cg_scores). Safe to re-run, and it upgrades a database
+-- that ran the first version of this file (no per-game bounds, no profile on rounds).
 --
 -- Security model (as for cg_scores):
 --   * RLS is on and there are NO table policies, so anon/authenticated can't read or write
@@ -25,6 +26,11 @@ create table if not exists public.arked_games (
   max_points_per_sec  int  not null default 1000   check (max_points_per_sec >= 1)
 );
 
+-- Upgrade from the first version of this file, whose arked_games had only id and name.
+alter table public.arked_games
+  add column if not exists max_points int not null default 100000 check (max_points between 1 and 100000),
+  add column if not exists max_points_per_sec int not null default 1000 check (max_points_per_sec >= 1);
+
 insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   ('teka-kata', 'Teka Kata UiTM', 100000, 1000),
   -- Ular: 15 points a food with walls on, a 20×20 board holds at most 397 foods.
@@ -48,6 +54,38 @@ create table if not exists public.arked_plays (
   -- The row's id in the game's own table (cg_scores.id for Teka Kata), so copies happen once.
   source_id   bigint
 );
+
+-- Upgrade from the first version of this file, whose rounds had no date or profile. Its rounds
+-- are all Teka Kata copies, so they take the date and profile from their cg_scores row.
+alter table public.arked_plays
+  add column if not exists play_date date,
+  add column if not exists nickname  text check (char_length(nickname) between 1 and 20),
+  add column if not exists user_type text check (user_type in ('pelajar', 'staf', 'alumni', 'awam')),
+  add column if not exists campus    text check (char_length(campus) between 1 and 60);
+
+update public.arked_plays p
+set play_date = coalesce(p.play_date, s.play_date),
+    nickname  = coalesce(p.nickname,  s.nickname),
+    user_type = coalesce(p.user_type, s.user_type),
+    campus    = coalesce(p.campus,    s.campus)
+from public.cg_scores s
+where p.game = 'teka-kata' and p.source_id = s.id
+  and (p.play_date is null or p.nickname is null or p.user_type is null or p.campus is null);
+
+-- Anything left without a profile (not expected) gets a neutral one rather than being deleted.
+update public.arked_plays
+set play_date = coalesce(play_date, (created_at at time zone 'Asia/Kuala_Lumpur')::date),
+    nickname  = coalesce(nickname, 'Pemain'),
+    user_type = coalesce(user_type, 'awam'),
+    campus    = coalesce(campus, 'Bukan warga UiTM')
+where play_date is null or nickname is null or user_type is null or campus is null;
+
+alter table public.arked_plays
+  alter column play_date set default (now() at time zone 'Asia/Kuala_Lumpur')::date,
+  alter column play_date set not null,
+  alter column nickname  set not null,
+  alter column user_type set not null,
+  alter column campus    set not null;
 
 alter table public.arked_games enable row level security;
 alter table public.arked_plays enable row level security;
