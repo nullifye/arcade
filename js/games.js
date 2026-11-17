@@ -28,6 +28,15 @@ export const GAMES = [
     status: 'live',
   },
   {
+    id: 'duga-kata',
+    name: 'Duga Kata',
+    desc: 'Teka perkataan lima huruf dalam enam cubaan.',
+    url: 'https://nullifye.github.io/warga-games/duga-kata/',
+    icon: 'icons/duga-kata.svg',
+    tags: ['Kata', 'Harian'],
+    status: 'live',
+  },
+  {
     id: 'silang-kata',
     name: 'Silang Kata',
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',

@@ -40,7 +40,10 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- (half a second a letter) gives 250 a second. Room left for longer phrases.
   ('teka-kata', 'Teka Kata', 10000, 260),
   -- Ular: 15 points a food with walls on, a 20×20 board holds at most 397 foods.
-  ('ular',      'Ular',           6000,   75)
+  ('ular',      'Ular',           6000,   75),
+  -- Duga Kata: a win scores 1,000 (one guess) down to 200 (six), plus up to 360 for speed; the
+  -- best round is a one-guess win in 1 second, 1,358 points.
+  ('duga-kata', 'Duga Kata',      2000, 1400)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,
