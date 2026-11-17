@@ -1,0 +1,980 @@
+/* Arked Warga. Mobile-first, light/dark.
+   The shared parts (tokens, buttons, header, profile chip, dialogs, dropdown, toast) are
+   copied from Teka Kata UiTM's css/style.css so the hub and the game look alike; keep them in
+   step. Inside AppsWarga, js/appswarga.js replaces the theme-derived tokens with the user's
+   theme and forces light mode (data-theme="light"), as AppsWarga itself is light-only. */
+:root {
+  --bg: #f3e5f5;
+  --bg-2: #efe4f4;
+  --surface: #ffffff;
+  --surface-2: #ede0f2;
+  --ink: #24142b;
+  --ink-2: #502b5f;
+  --muted: #906ba0;
+  --line: #caa5da;
+  --primary: #7b1fa2;
+  --primary-2: #ab47bc;
+  --primary-ink: #ffffff;
+  --gold: #e9a91f;
+  --gold-2: #f6c54f;
+  --gold-ink: #2b1a00;
+  --ok: #17915a;
+  --bad: #d43d4b;
+  --sel: #ffd560;
+  --same: #ede0f2;
+  --track: #e5d2ec;
+  --key: #ffffff;
+  --key-ink: #2c1535;
+  --key-off: #dac0e5;
+  --key-off-ink: #b27dc9;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 10px 30px -12px rgba(0, 0, 0, 0.22);
+  --radius: 18px;
+  --font: 'Lexend', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #150f20;
+    --bg-2: #1d1530;
+    --surface: #221935;
+    --surface-2: #1b142b;
+    --ink: #f1eafc;
+    --ink-2: #c1b2da;
+    --muted: #8b7ca6;
+    --line: #4b3c66;
+    --primary: #8f5fe0;
+    --primary-2: #a77cf0;
+    --primary-ink: #ffffff;
+    --gold: #f0b73a;
+    --gold-2: #f7cd6a;
+    --sel: #6b5410;
+    --same: #34265a;
+    --track: #2c2240;
+    --key: #3a2c55;
+    --key-ink: #f1eafc;
+    --key-off: #241b38;
+    --key-off-ink: #5d4f78;
+    --ok: #3ccb86;
+    --bad: #ff6b78;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3), 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 500px at 50% -200px, color-mix(in srgb, var(--primary) 22%, transparent), transparent 70%) no-repeat,
+    var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+#app {
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 100dvh;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+}
+
+svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.2s;
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-ink);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 60%, #000);
+}
+
+.btn-primary:active {
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--primary) 60%, #000);
+}
+
+.btn-gold {
+  background: linear-gradient(180deg, var(--gold-2), var(--gold));
+  color: var(--gold-ink);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--gold) 55%, #5a3600);
+}
+
+.btn-gold:active {
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--gold) 55%, #5a3600);
+}
+
+/* Flat 3D like the other buttons: outlined, on a solid edge in the outline colour. */
+.btn-ghost {
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow:
+    inset 0 0 0 2px var(--line),
+    0 4px 0 var(--line);
+}
+
+.btn-ghost:active {
+  box-shadow:
+    inset 0 0 0 2px var(--line),
+    0 2px 0 var(--line);
+}
+
+.btn-link {
+  background: none;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 40px;
+  padding: 8px 12px;
+}
+
+.btn-wide {
+  width: 100%;
+}
+
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--surface);
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 1.15rem;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+  flex: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ---------- home ---------- */
+.home-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.head-actions {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+/* The close button only exists inside AppsWarga. */
+#btn-close-app {
+  display: none;
+}
+
+html.in-appswarga #btn-close-app {
+  display: grid;
+}
+
+.profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 5px 16px 5px 5px;
+  box-shadow: var(--shadow);
+  min-width: 0;
+  text-align: left;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  font-weight: 700;
+  flex: none;
+}
+
+.chip-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.chip-text strong,
+.chip-text small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-text small {
+  color: var(--ink-2);
+  font-size: 0.75rem;
+}
+
+
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+  /* Always one line ("CABARAN HARIAN" on narrow phones): cut with "…" if it can't fit. */
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tag-gold {
+  background: color-mix(in srgb, var(--gold) 25%, transparent);
+  color: color-mix(in srgb, var(--gold) 40%, var(--ink));
+}
+
+/* Sits at the very bottom of the screen, however tall the screen is.
+   Tapping it reloads Arked Warga, bypassing the cache. */
+.app-version {
+  align-self: center;
+  margin: auto 0 0;
+  min-height: 44px;
+  padding: 12px 16px 0;
+  border: 0;
+  background: none;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.app-version:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+/* ---------- AppsWarga full screen (bridge v2, docs/miniapp-bridge.md) ----------
+   While AppsWarga's header is hidden, <html> has .appswarga-fullscreen and the page runs
+   edge to edge behind the status bar. Pad the top by --appswarga-safe-top (the status bar's
+   height; env() isn't reliable in Android's web view), then the same 12 px as in a browser.
+   js/appswarga.js hides AppsWarga's close button; if that fails (.aw-close-visible), the top
+   row moves below the button instead (12 px gap + 32 px button + 12 px). */
+html.appswarga-fullscreen .screen {
+  padding-top: calc(var(--appswarga-safe-top, 0px) + 12px);
+}
+
+html.appswarga-fullscreen.aw-close-visible .screen {
+  padding-top: calc(var(--appswarga-safe-top, 0px) + 56px);
+}
+
+
+/* ---------- dialogs ---------- */
+.dialog {
+  border: 0;
+  border-radius: 22px;
+  padding: 22px 20px 18px;
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.5);
+}
+
+.dialog::backdrop {
+  background: rgba(20, 10, 35, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.dialog h2 {
+  margin: 0 0 4px;
+  font-size: 1.35rem;
+}
+
+.muted {
+  color: var(--ink-2);
+  margin: 0 0 14px;
+  font-size: 0.88rem;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.field input,
+.select-trigger {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  padding: 10px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.field input:focus,
+.select-trigger:focus-visible,
+.select-trigger[aria-expanded='true'] {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* ---------- custom dropdown (js/select.js) ---------- */
+.select-wrap {
+  position: relative;
+  display: block;
+}
+
+/* The real <select> stays for its value and options, but is never shown. */
+.select-native {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.select-trigger {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding-right: 44px;
+  cursor: pointer;
+}
+
+.select-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-trigger.placeholder .select-value {
+  color: var(--muted);
+}
+
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  width: 9px;
+  height: 9px;
+  border-right: 2.5px solid var(--primary);
+  border-bottom: 2.5px solid var(--primary);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+/* User type set by AppsWarga: looks like the other fields, with a lock instead of the arrow. */
+.select-trigger:disabled {
+  opacity: 1;
+  color: var(--ink);
+  cursor: not-allowed;
+}
+
+.select-wrap.locked::after {
+  right: 15px;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  transform: translateY(-50%);
+  background: var(--ink-2);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4.5' y='10.5' width='15' height='10' rx='2.5'/%3E%3Cpath d='M8 10.5V7.5a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4.5' y='10.5' width='15' height='10' rx='2.5'/%3E%3Cpath d='M8 10.5V7.5a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Bottom sheet with the choices. */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(20, 10, 35, 0);
+  transition: background 0.2s ease;
+}
+
+.sheet-backdrop.open {
+  background: rgba(20, 10, 35, 0.45);
+}
+
+.sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: min(72dvh, 560px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 22px 22px 0 0;
+  padding: 8px 12px max(12px, env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 40px -16px rgba(0, 0, 0, 0.45);
+  transform: translateY(100%);
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sheet-backdrop.open .sheet {
+  transform: translateY(0);
+}
+
+.sheet::before {
+  content: '';
+  align-self: center;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  margin-bottom: 6px;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px 8px;
+}
+
+.sheet-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.sheet-close {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg-2);
+  color: var(--ink-2);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.sheet-search {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.sheet-search:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.sheet-list {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+
+.sheet-list::-webkit-scrollbar {
+  display: none;
+}
+
+.sheet-group + .sheet-group {
+  margin-top: 6px;
+}
+
+.sheet-group-label {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 8px 10px 4px;
+}
+
+.sheet-option {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  padding: 10px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  color: var(--ink);
+}
+
+.sheet-option:hover,
+.sheet-option:focus-visible {
+  background: var(--bg-2);
+  outline: none;
+}
+
+.sheet-option[aria-selected='true'] {
+  background: var(--same);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.sheet-option svg {
+  color: var(--primary);
+}
+
+.sheet-option:disabled {
+  color: var(--ink-2);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sheet-empty {
+  text-align: center;
+  color: var(--ink-2);
+  padding: 20px 0;
+  margin: 0;
+}
+
+.field-hint {
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: var(--ink-2);
+}
+
+.field-hint.warn {
+  color: var(--bad);
+}
+
+.form-error {
+  color: var(--bad);
+  min-height: 1.2em;
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.help-list {
+  padding-left: 1.2em;
+  margin: 12px 0 18px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.help-list li + li {
+  margin-top: 8px;
+}
+
+.help-list b {
+  color: var(--ink);
+}
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 20px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 10;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+/* ---------- animations ---------- */
+@keyframes rise {
+  from { transform: translateY(16px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- hub ---------- */
+.hub-brand {
+  text-align: center;
+  margin: 26px 0 20px;
+  animation: rise 0.4s both ease-out;
+}
+
+.hub-brand h1 {
+  font-size: clamp(2rem, 9vw, 2.6rem);
+  line-height: 1.05;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.hub-brand h1 span {
+  color: var(--primary);
+}
+
+.hub-brand p {
+  color: var(--ink-2);
+  margin: 10px auto 0;
+  max-width: 30ch;
+}
+
+/* Combined points: one solid card in the theme colour. */
+.points-card {
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  color: var(--primary-ink);
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 12px;
+  align-items: end;
+  animation: rise 0.35s both ease-out;
+}
+
+.points-main h2 {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+
+.points-main strong {
+  display: block;
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.points-stats {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  text-align: right;
+}
+
+.points-stats dt {
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.points-stats dd {
+  margin: 2px 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.points-games {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 8px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.points-games li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.points-games span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.points-games b {
+  font-variant-numeric: tabular-nums;
+}
+
+/* The last game played, with a button to carry on. */
+.continue-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--gold-2) 30%, var(--surface)), var(--surface) 60%);
+  box-shadow: var(--shadow);
+  animation: rise 0.35s both ease-out;
+}
+
+.continue-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.25;
+}
+
+.continue-text h2 {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--gold) 40%, var(--ink));
+}
+
+.continue-text strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.continue-text small {
+  font-size: 0.78rem;
+  color: var(--ink-2);
+}
+
+.continue-text .continue-daily {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.continue-card .btn {
+  flex: none;
+  padding: 10px 16px;
+  min-height: 44px;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 22px 2px 10px;
+}
+
+.game-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.game-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  flex: none;
+  display: block;
+}
+
+.continue-card .game-icon {
+  width: 52px;
+  height: 52px;
+}
+
+.game-card {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+.game-body {
+  min-width: 0;
+}
+
+.game-body h3 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.game-desc {
+  margin: 3px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+.game-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.game-tags .tag {
+  font-size: 0.66rem;
+  padding: 3px 8px;
+}
+
+.game-status {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.game-play {
+  padding: 10px 18px;
+  min-height: 44px;
+}
+
+/* Akan Datang: the same card, faded, and nothing to press. */
+.game-card.soon {
+  grid-template-columns: 56px 1fr;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  box-shadow: none;
+}
+
+.game-card.soon .game-icon {
+  filter: grayscale(0.85);
+  opacity: 0.55;
+}
+
+.game-card.soon h3,
+.game-card.soon .game-desc {
+  opacity: 0.7;
+}
+
+.tag-soon {
+  background: color-mix(in srgb, var(--gold) 25%, transparent);
+  color: color-mix(in srgb, var(--gold) 40%, var(--ink));
+}
+
+.screen-hub .app-version {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+/* Narrow phones: buttons go under the text, full width, and the points stats under the total. */
+@media (max-width: 379px) {
+  .points-card {
+    grid-template-columns: 1fr;
+  }
+
+  .points-stats {
+    text-align: left;
+  }
+
+  .continue-card {
+    flex-wrap: wrap;
+  }
+
+  .continue-card .btn {
+    width: 100%;
+  }
+
+  .game-card {
+    grid-template-columns: 56px 1fr;
+  }
+
+  .game-play {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}

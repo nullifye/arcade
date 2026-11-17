@@ -1,0 +1,10 @@
+{
+  "name": "arked",
+  "private": true,
+  "type": "module",
+  "description": "Arked Warga: the AppsWarga game hub for UiTM (static site, no build step).",
+  "scripts": {
+    "test": "node --test tests/",
+    "serve": "node tools/dev-server.mjs 8080"
+  }
+}
