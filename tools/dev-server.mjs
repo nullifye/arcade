@@ -1,6 +1,6 @@
-// Local server laid out like GitHub Pages: /arked/ is this repo and /teka-kata/ is Teka Kata
+// Local server laid out like GitHub Pages: /arcade/ is this repo and /teka-kata/ is Teka Kata
 // (../cryptogram-word-logic), so launching a game from the hub works locally.
-//   node tools/dev-server.mjs [port]      then open http://localhost:8080/arked/
+//   node tools/dev-server.mjs [port]      then open http://localhost:8080/arcade/
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const SITES = {
-  arked: here,
+  arcade: here,
   'teka-kata': resolve(here, '../cryptogram-word-logic'),
 };
 const TYPES = {
@@ -27,7 +27,7 @@ createServer(async (req, res) => {
   const [, site, ...rest] = path.split('/');
   const root = SITES[site];
   if (!root) {
-    res.writeHead(302, { Location: '/arked/' }).end();
+    res.writeHead(302, { Location: '/arcade/' }).end();
     return;
   }
   if (rest.length === 0) {
@@ -47,4 +47,4 @@ createServer(async (req, res) => {
   } catch {
     res.writeHead(404).end('Not found');
   }
-}).listen(port, () => console.log(`Arked Warga: http://localhost:${port}/arked/`));
+}).listen(port, () => console.log(`Arked Warga: http://localhost:${port}/arcade/`));

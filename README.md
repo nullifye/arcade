@@ -3,16 +3,16 @@
 The game hub for UiTM's AppsWarga app: one tile in AppsWarga opens a list of games, one
 player profile shared by every game, and combined points across all of them.
 
-Live: https://nullifye.github.io/arked/ (GitHub Pages, static, no build step).
+Live: https://nullifye.github.io/arcade/ (GitHub Pages, static, no build step).
 
 ## Run locally
 
 ```sh
-npm run serve        # http://localhost:8080/arked/  (Teka Kata at /teka-kata/)
+npm run serve        # http://localhost:8080/arcade/  (Teka Kata at /teka-kata/)
 npm test             # node --test tests/
 ```
 
-`tools/dev-server.mjs` serves this repo at `/arked/` and Teka Kata (`../cryptogram-word-logic`)
+`tools/dev-server.mjs` serves this repo at `/arcade/` and Teka Kata (`../cryptogram-word-logic`)
 at `/teka-kata/`, like GitHub Pages. On the dev server, games hosted on `nullifye.github.io`
 open from the local copy.
 
@@ -56,7 +56,7 @@ dialogs, dropdown) are copies. Change them in both repos.
 
 1. Run `supabase/arked.sql` in the Supabase SQL Editor (after Teka Kata's `schema.sql`).
 2. In AppsWarga's Mini Apps manager, for the Arked Warga listing:
-   - start URL `https://nullifye.github.io/arked/`;
+   - start URL `https://nullifye.github.io/arcade/`;
    - allowed hosts: every game host (`nullifye.github.io` for now);
    - icon `icon-512.png`;
    - Full screen on.
