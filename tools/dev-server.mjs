@@ -1,5 +1,5 @@
-// Local server laid out like GitHub Pages: /arcade/ is this repo and /teka-kata/ is Teka Kata
-// (../cryptogram-word-logic), so launching a game from the hub works locally.
+// Local server laid out like GitHub Pages: /arcade/ is this repo and /warga-games/ is the games
+// repo (../warga-games), so launching a game from the hub works locally.
 //   node tools/dev-server.mjs [port]      then open http://localhost:8080/arcade/
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const here = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const SITES = {
   arcade: here,
-  'teka-kata': resolve(here, '../cryptogram-word-logic'),
+  'warga-games': resolve(here, '../warga-games'),
 };
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
