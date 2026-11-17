@@ -11,7 +11,7 @@
 export const GAMES = [
   {
     id: 'teka-kata',
-    name: 'Teka Kata UiTM',
+    name: 'Teka Kata',
     desc: 'Pecahkan kod nombor dan temui frasa tentang UiTM dan Malaysia.',
     url: 'https://nullifye.github.io/warga-games/teka-kata/',
     icon: 'icons/teka-kata.svg',

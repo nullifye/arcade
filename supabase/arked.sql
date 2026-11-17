@@ -38,7 +38,7 @@ alter table public.arked_games
 insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- Teka Kata: the longest phrase hides 36 letters, worth at most 4,500; the fastest time
   -- (half a second a letter) gives 250 a second. Room left for longer phrases.
-  ('teka-kata', 'Teka Kata UiTM', 10000, 260),
+  ('teka-kata', 'Teka Kata', 10000, 260),
   -- Ular: 15 points a food with walls on, a 20×20 board holds at most 397 foods.
   ('ular',      'Ular',           6000,   75)
 on conflict (id) do update

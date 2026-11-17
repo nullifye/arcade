@@ -1,6 +1,6 @@
 /* Arked Warga. Mobile-first, light/dark.
    The shared parts (tokens, buttons, header, profile chip, dialogs, dropdown, toast) are
-   copied from Teka Kata UiTM's css/style.css so the hub and the game look alike; keep them in
+   copied from Teka Kata's css/style.css so the hub and the game look alike; keep them in
    step. Inside AppsWarga, js/appswarga.js replaces the theme-derived tokens with the user's
    theme and forces light mode (data-theme="light"), as AppsWarga itself is light-only. */
 :root {

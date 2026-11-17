@@ -18,7 +18,7 @@ test('fetchSummary calls arked_player_summary with the player id', async () => {
   let seen;
   const fake = async (url, init) => {
     seen = { url, init };
-    return { ok: true, json: async () => [{ game: 'teka-kata', name: 'Teka Kata UiTM', points: 820, seconds: 95, plays: 1 }] };
+    return { ok: true, json: async () => [{ game: 'teka-kata', name: 'Teka Kata', points: 820, seconds: 95, plays: 1 }] };
   };
   const r = await fetchSummary('11111111-1111-4111-8111-111111111111', fake);
   assert.equal(seen.url, `${SUPABASE_URL}/rest/v1/rpc/arked_player_summary`);
