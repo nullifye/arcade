@@ -45,7 +45,10 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   ('ular',      'Ular',           6000,   75),
   -- Duga Kata: a win scores 1,000 (one guess) down to 200 (six), plus up to 360 for speed; the
   -- best round is a one-guess win in 1 second, 1,358 points.
-  ('duga-kata', 'Duga Kata',      2000, 1400)
+  ('duga-kata', 'Duga Kata',      2000, 1400),
+  -- Kejar Lapan: a point a metre (60 m/s at most, boosting) plus items and checkpoints; a
+  -- perfect boosted run stays under 240 a second. A long run is a few thousand points.
+  ('kejar-lapan', 'Kejar Lapan',  100000, 300)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,

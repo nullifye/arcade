@@ -37,6 +37,15 @@ export const GAMES = [
     status: 'live',
   },
   {
+    id: 'kejar-lapan',
+    name: 'Kejar Lapan',
+    desc: 'Pecut ke destinasi sebelum pukul 8:00.',
+    url: 'https://nullifye.github.io/warga-games/kejar-lapan/',
+    icon: 'icons/kejar-lapan.svg',
+    tags: ['Arked', 'Refleks'],
+    status: 'live',
+  },
+  {
     id: 'silang-kata',
     name: 'Silang Kata',
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
