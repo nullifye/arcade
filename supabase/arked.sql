@@ -36,9 +36,11 @@ alter table public.arked_games
   add column if not exists max_points_per_sec int not null default 1000 check (max_points_per_sec >= 1);
 
 insert into public.arked_games (id, name, max_points, max_points_per_sec) values
-  -- Teka Kata: the longest phrase hides 36 letters, worth at most 4,500; the fastest time
-  -- (half a second a letter) gives 250 a second. Room left for longer phrases.
-  ('teka-kata', 'Teka Kata', 10000, 260),
+  -- Teka Kata: a round is worth at most 130 points per hidden letter (50, plus up to 80 for
+  -- speed), so the longest phrase (36 hidden) tops out at 4,670, even solved in 1 second.
+  -- Fast players solve a known phrase in under half a second a letter, so time isn't capped
+  -- separately: the per-second limit just allows that best round in 1 second.
+  ('teka-kata', 'Teka Kata', 6000, 6000),
   -- Ular: 15 points a food with walls on, a 20×20 board holds at most 397 foods.
   ('ular',      'Ular',           6000,   75),
   -- Duga Kata: a win scores 1,000 (one guess) down to 200 (six), plus up to 360 for speed; the
