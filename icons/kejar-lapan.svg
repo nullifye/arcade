@@ -3,7 +3,7 @@
   <path d="M0 50h64v14H0z" fill="#2c2f3a"/>
   <path d="M30 50h4v14h-4z" fill="#f8fafc" opacity=".8"/>
   <circle cx="46" cy="18" r="11" fill="#f8fafc" stroke="#facc15" stroke-width="3"/>
-  <path d="M46 11v7h5" fill="none" stroke="#2b1a00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M46 11v7l-4.3 2.5" fill="none" stroke="#2b1a00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
   <rect x="14" y="16" width="10" height="10" fill="#d99b66"/>
   <rect x="13" y="14" width="12" height="4" fill="#18181b"/>
   <rect x="13" y="27" width="12" height="12" fill="#1d4ed8"/>
