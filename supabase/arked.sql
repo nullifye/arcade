@@ -1,11 +1,9 @@
 -- Arked Warga: every game's rounds in one table, for combined points and per-game boards
--- (Hari Ini, Keseluruhan, Kampus). Every game, Teka Kata included, records rounds with
--- arked_record and reads boards with arked_top / arked_campus_rank.
+-- (Hari Ini, Keseluruhan, Kampus). Every game records rounds with arked_record and reads
+-- boards with arked_top / arked_campus_rank.
 --
--- Run in the Supabase SQL editor. Safe to re-run. It also upgrades a database that ran an
--- earlier version of this file, and, while Teka Kata's old public.cg_scores table still
--- exists, copies its rounds in (and keeps copying any that older Teka Kata pages still send).
--- Once that's done, supabase/retire-cg-scores.sql removes the old cg_* table and functions.
+-- Run in the Supabase SQL editor. Safe to re-run; it also upgrades a database that ran an
+-- earlier version of this file.
 --
 -- Security model:
 --   * RLS is on and there are NO table policies, so anon/authenticated can't read or write
@@ -77,7 +75,7 @@ create table if not exists public.arked_plays (
   seconds     int         not null check (seconds between 0 and 86400),
   -- A game's daily challenge round: one per player, game and day.
   daily       boolean     not null default false,
-  -- The row's id in Teka Kata's old cg_scores table, so each is copied once. Null otherwise.
+  -- For Teka Kata rounds copied from its retired cg_scores table: that row's id. Null otherwise.
   source_id   bigint
 );
 
@@ -88,24 +86,6 @@ alter table public.arked_plays
   add column if not exists user_type text check (user_type in ('pelajar', 'staf', 'alumni', 'awam')),
   add column if not exists campus    text check (char_length(campus) between 1 and 60),
   add column if not exists daily     boolean not null default false;
-
--- Copies of Teka Kata rounds take their date, profile and mode from their cg_scores row.
-do $$
-begin
-  if to_regclass('public.cg_scores') is not null then
-    update public.arked_plays p
-    set play_date = coalesce(p.play_date, s.play_date),
-        nickname  = coalesce(p.nickname,  s.nickname),
-        user_type = coalesce(p.user_type, s.user_type),
-        campus    = coalesce(p.campus,    s.campus),
-        daily     = (s.mode = 'daily')
-    from public.cg_scores s
-    where p.game = 'teka-kata' and p.source_id = s.id
-      and (p.play_date is null or p.nickname is null or p.user_type is null or p.campus is null
-           or p.daily is distinct from (s.mode = 'daily'));
-  end if;
-end;
-$$;
 
 -- Anything left without a profile (not expected) gets a neutral one rather than being deleted.
 update public.arked_plays
@@ -138,50 +118,9 @@ create index if not exists arked_plays_day
 -- One daily challenge round per player, game and day (also arked_record's duplicate check).
 create unique index if not exists arked_plays_daily_once
   on public.arked_plays (player_id, game, play_date) where daily;
--- Each copied cg_scores row at most once.
+-- Each round copied from the retired cg_scores table at most once.
 create unique index if not exists arked_plays_source
   on public.arked_plays (game, source_id) where source_id is not null;
-
--- ---------------------------------------------------------------- Teka Kata's old table
-
--- While cg_scores exists: copy its rounds, and keep copying any an older (cached) Teka Kata
--- page still sends through cg_submit. supabase/retire-cg-scores.sql removes all of this.
-create or replace function public.arked_copy_cg_score()
-returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $$
-begin
-  insert into public.arked_plays
-    (created_at, play_date, player_id, nickname, user_type, campus, game, points, seconds, daily, source_id)
-  values
-    (new.created_at, new.play_date, new.player_id, new.nickname, new.user_type, new.campus,
-     'teka-kata', least(new.score, 100000), new.seconds, new.mode = 'daily', new.id)
-  on conflict do nothing;
-  return new;
-end;
-$$;
-
-revoke all on function public.arked_copy_cg_score() from public, anon, authenticated;
-
-do $$
-begin
-  if to_regclass('public.cg_scores') is not null then
-    drop trigger if exists arked_from_cg_scores on public.cg_scores;
-    create trigger arked_from_cg_scores
-      after insert on public.cg_scores
-      for each row execute function public.arked_copy_cg_score();
-
-    insert into public.arked_plays
-      (created_at, play_date, player_id, nickname, user_type, campus, game, points, seconds, daily, source_id)
-    select s.created_at, s.play_date, s.player_id, s.nickname, s.user_type, s.campus,
-           'teka-kata', least(s.score, 100000), s.seconds, s.mode = 'daily', s.id
-    from public.cg_scores s
-    on conflict do nothing;
-  end if;
-end;
-$$;
 
 -- ---------------------------------------------------------------- functions
 
@@ -192,6 +131,8 @@ drop function if exists public.arked_player_summary(uuid);
 drop function if exists public.arked_top(text, uuid, date, int);
 drop function if exists public.arked_campus_rank(text, int);
 drop function if exists public.arked_player_totals(text, date);
+-- Teka Kata's old cg_scores table is retired; this copied its rounds in.
+drop function if exists public.arked_copy_cg_score();
 
 -- A game reports one finished round, with the player's current profile.
 --   p_daily      true for a daily challenge round: at most one per player, game and day
