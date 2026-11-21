@@ -47,10 +47,10 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- 2048: points come only from merges. Strong play averages under 30 points a move (a greedy
   -- player stays under 15), so even 10 moves a second stays under 500 a second.
   ('2048',      '2048',         100000,  500),
-  -- Teka Blok: 1 a cell, 10 a line, +10 per extra line at once and up to +50 for a streak of
+  -- Susun Blok: 1 a cell, 10 a line, +10 per extra line at once and up to +50 for a streak of
   -- clears. Big clears need many placements to set up: a greedy player averages about 7 points
   -- a placement (tested under 20), so three placements a second stays well under 200.
-  ('blok',      'Teka Blok',    100000,  200),
+  ('blok',      'Susun Blok',   100000,  200),
   -- Memori: a perfect level 1 is 450 points (4 pairs × 100 + 50); a lucky clear in under 1.5 s
   -- rounds to 1 second, so allow 500 a second.
   ('memori',    'Memori',       100000,  500),

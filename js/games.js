@@ -56,7 +56,7 @@ export const GAMES = [
   },
   {
     id: 'blok',
-    name: 'Teka Blok',
+    name: 'Susun Blok',
     desc: 'Susun kepingan dan lengkapkan baris atau lajur.',
     url: 'https://nullifye.github.io/warga-games/blok/',
     icon: 'icons/blok.svg',
