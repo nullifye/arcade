@@ -40,12 +40,21 @@ export function paletteFor(theme) {
   };
 }
 
+/** Where the last AppsWarga palette is kept; theme-boot.js applies it before the first paint. */
+export const THEME_KEY = 'arked.theme';
+
 function applyTheme(theme) {
   const palette = paletteFor(theme);
   if (!palette) return;
   const root = document.documentElement;
   for (const [k, v] of Object.entries(palette)) root.style.setProperty(k, v);
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', palette['--primary']);
+  // The hub and every game share this origin, so the next page opens already in this theme.
+  try {
+    localStorage.setItem(THEME_KEY, JSON.stringify({ palette }));
+  } catch {
+    /* storage unavailable: the next page waits for the bridge as before */
+  }
 }
 
 /** Theme from the CSS variables the bridge sets on <html>, used if getTheme fails. */
@@ -59,6 +68,11 @@ function themeFromCssVars() {
   };
 }
 
+// Settles once the AppsWarga theme is on the page, so `ready` (which takes AppsWarga's loading
+// screen down) never reveals the default colours first.
+let themeApplied;
+const themeReady = new Promise((resolve) => { themeApplied = resolve; });
+
 async function onBridgeReady() {
   // AppsWarga's screens are light-only, so match them even when the phone is in dark mode.
   document.documentElement.dataset.theme = 'light';
@@ -70,6 +84,7 @@ async function onBridgeReady() {
   } catch {
     applyTheme(themeFromCssVars());
   }
+  themeApplied();
 }
 
 /**
@@ -100,17 +115,20 @@ export function closeMiniApp() {
 /**
  * Tells AppsWarga the first screen is drawn, so it takes its loading screen down now
  * instead of 3 s after the page finishes loading (bridge v3 `ready`). Waits for the bridge
- * if it isn't there yet; outside AppsWarga it does nothing. An older AppsWarga has no
- * `notifyReady`, and answers `ready` with UNKNOWN_HANDLER, which is harmless.
+ * if it isn't there yet, then for the theme to be applied (at most THEME_WAIT_MS, so a slow
+ * getTheme never holds the loading screen); outside AppsWarga it does nothing. An older
+ * AppsWarga has no `notifyReady`, and answers `ready` with UNKNOWN_HANDLER, which is harmless.
  */
+const THEME_WAIT_MS = 1500;
 export function notifyAppReady() {
   const send = () => {
     const bridge = window.appswarga;
     if (typeof bridge?.notifyReady === 'function') bridge.notifyReady();
     else bridge?.callHandler?.('ready');
   };
-  if (inAppsWarga()) send();
-  else window.addEventListener('appswargaReady', send, { once: true });
+  const afterTheme = () => Promise.race([themeReady, new Promise((r) => setTimeout(r, THEME_WAIT_MS))]).then(send);
+  if (inAppsWarga()) afterTheme();
+  else window.addEventListener('appswargaReady', afterTheme, { once: true });
 }
 
 /**
