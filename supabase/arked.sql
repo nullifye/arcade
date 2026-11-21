@@ -46,6 +46,16 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- Duga Kata: a win scores 1,000 (one guess) down to 200 (six), plus up to 360 for speed; the
   -- best round is a one-guess win in 1 second, 1,358 points.
   ('duga-kata', 'Duga Kata',      2000, 1400),
+  -- 2048: points come only from merges. Strong play averages under 30 points a move (a greedy
+  -- player stays under 15), so even 10 moves a second stays under 500 a second.
+  ('2048',      '2048',         100000,  500),
+  -- Teka Blok: 1 a cell, 10 a line, +10 per extra line at once and up to +50 for a streak of
+  -- clears. Big clears need many placements to set up: a greedy player averages about 7 points
+  -- a placement (tested under 20), so three placements a second stays well under 200.
+  ('blok',      'Teka Blok',    100000,  200),
+  -- Memori: a perfect level 1 is 450 points (4 pairs × 100 + 50); a lucky clear in under 1.5 s
+  -- rounds to 1 second, so allow 500 a second.
+  ('memori',    'Memori',       100000,  500),
   -- Kejar Lapan: a point a metre (60 m/s at most, boosting) plus items and checkpoints; a
   -- perfect boosted run stays under 240 a second. A long run is a few thousand points.
   ('kejar-lapan', 'Kejar Lapan',  100000, 300)
