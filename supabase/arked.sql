@@ -74,9 +74,7 @@ create table if not exists public.arked_plays (
   points      int         not null check (points between 0 and 100000),
   seconds     int         not null check (seconds between 0 and 86400),
   -- A game's daily challenge round: one per player, game and day.
-  daily       boolean     not null default false,
-  -- For Teka Kata rounds copied from its retired cg_scores table: that row's id. Null otherwise.
-  source_id   bigint
+  daily       boolean     not null default false
 );
 
 -- Upgrade from earlier versions of this file (no date, profile or daily flag on rounds).
@@ -86,6 +84,10 @@ alter table public.arked_plays
   add column if not exists user_type text check (user_type in ('pelajar', 'staf', 'alumni', 'awam')),
   add column if not exists campus    text check (char_length(campus) between 1 and 60),
   add column if not exists daily     boolean not null default false;
+
+-- Teka Kata's old cg_scores table is retired, so the ids its copied rounds kept are dropped.
+drop index if exists public.arked_plays_source;
+alter table public.arked_plays drop column if exists source_id;
 
 -- Anything left without a profile (not expected) gets a neutral one rather than being deleted.
 update public.arked_plays
@@ -118,9 +120,6 @@ create index if not exists arked_plays_day
 -- One daily challenge round per player, game and day (also arked_record's duplicate check).
 create unique index if not exists arked_plays_daily_once
   on public.arked_plays (player_id, game, play_date) where daily;
--- Each round copied from the retired cg_scores table at most once.
-create unique index if not exists arked_plays_source
-  on public.arked_plays (game, source_id) where source_id is not null;
 
 -- ---------------------------------------------------------------- functions
 
