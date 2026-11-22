@@ -10,7 +10,6 @@ import {
   appsWargaAllowedUserTypes,
   appsWargaSessionError,
   closeMiniApp,
-  inAppsWarga,
   notifyAppReady,
 } from './appswarga.js';
 
@@ -181,20 +180,75 @@ function renderProfileChip() {
 
 // ---------- games ----------
 
-/** Opens a game once there's a profile (asking for one first). */
-function play(game) {
+let launching = false;
+
+/**
+ * Opens a game once there's a profile (asking for one first). The tapped button shows a spinner
+ * straight away, as the hub stays on screen until the game's page draws.
+ */
+function play(game, button) {
+  if (launching) return;
   if (!loadProfile()) {
-    afterProfile = () => play(game);
+    afterProfile = () => play(game, button);
     return openProfile();
   }
+  launching = true;
+  document.body.classList.add('launching');
+  button?.classList.add('is-launching');
+  button?.setAttribute('aria-busy', 'true');
   const key = gameKey(game.id);
-  const sent = writeShared(key, { ...readShared(key), lastPlayedAt: Date.now() });
-  const go = () => {
-    location.href = launchUrl(game);
+  // Saved on this device at once (what the hub and games read); AppsWarga's copy follows.
+  writeShared(key, { ...readShared(key), lastPlayedAt: Date.now() });
+  // One frame, so the spinner shows, then go. If the page is still here much later (offline),
+  // let the buttons work again.
+  requestAnimationFrame(() => setTimeout(() => { location.href = launchUrl(game); }, 0));
+  setTimeout(endLaunch, 10000);
+}
+
+function endLaunch() {
+  launching = false;
+  document.body.classList.remove('launching');
+  for (const b of document.querySelectorAll('.is-launching')) {
+    b.classList.remove('is-launching');
+    b.removeAttribute('aria-busy');
+  }
+}
+
+// ---------- prefetch ----------
+
+/**
+ * While the hub sits idle, fetches each live game's page and small files (warga-games
+ * preload.json, written by its tools/preload.mjs) into the browser's cache, so a tapped game
+ * opens almost at once. Plain low-priority fetches, a few at a time: unlike <link rel=prefetch>
+ * they also work in Safari and iOS WebViews, and fill the normal cache the game page reads.
+ * Skipped with data saver on or on a 2G connection; any failure just means no head start.
+ */
+async function prefetchGames() {
+  const conn = navigator.connection;
+  if (conn?.saveData || /2g/.test(conn?.effectiveType ?? '')) return;
+  const urls = new Set();
+  const lists = new Map(); // games base URL -> its preload.json games
+  for (const g of LIVE) {
+    try {
+      const page = new URL(launchUrl(g));
+      const base = new URL('../', page).href;
+      if (!lists.has(base)) lists.set(base, fetch(`${base}preload.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null));
+      const files = (await lists.get(base))?.games?.[page.pathname.split('/').filter(Boolean).at(-1)];
+      if (!files) continue;
+      urls.add(page.href); // the page exactly as Main opens it, so its cached copy is the one used
+      for (const file of files.slice(1)) urls.add(new URL(file, base).href);
+    } catch {
+      /* not a warga-games game: nothing to prefetch */
+    }
+  }
+  const queue = [...urls];
+  const worker = async () => {
+    while (queue.length && !launching) {
+      // Read the body to the end so the response is stored in the cache.
+      await fetch(queue.shift(), { priority: 'low' }).then((r) => r.arrayBuffer()).catch(() => {});
+    }
   };
-  // In AppsWarga, let its storage take the write before the page goes (briefly; it's quick).
-  if (inAppsWarga()) Promise.race([sent, new Promise((r) => setTimeout(r, 400))]).then(go);
-  else go();
+  await Promise.all([worker(), worker(), worker()]);
 }
 
 function renderGrid() {
@@ -219,7 +273,7 @@ function renderGrid() {
       const btn = h('button', 'btn btn-primary game-play', 'Main');
       btn.type = 'button';
       btn.setAttribute('aria-label', `Main ${g.name}`);
-      btn.addEventListener('click', () => play(g));
+      btn.addEventListener('click', () => play(g, btn));
       li.append(btn);
     } else {
       li.setAttribute('aria-disabled', 'true');
@@ -241,7 +295,7 @@ function renderContinue() {
   $('#continue-icon').src = g.icon;
   $('#continue-name').textContent = g.name;
   $('#continue-meta').textContent = `Dimainkan ${timeAgo(rec.lastPlayedAt)}`;
-  $('#continue-btn').onclick = () => play(g);
+  $('#continue-btn').onclick = () => play(g, $('#continue-btn'));
 }
 
 // ---------- points ----------
@@ -324,7 +378,9 @@ function init() {
 
   // Back from a game: the page may come from the back/forward cache, so read everything again.
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted) refresh();
+    if (!e.persisted) return;
+    endLaunch(); // a game was opened from here: its button shouldn't still be spinning
+    refresh();
   });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') refresh();
@@ -333,6 +389,11 @@ function init() {
   render();
   syncShared(SHARED_KEYS, render);
   requestAnimationFrame(() => notifyAppReady());
+  // Prefetch the games once the hub has loaded and the phone has a quiet moment.
+  const idle = window.requestIdleCallback ?? ((fn) => setTimeout(fn, 1500));
+  const later = () => idle(() => prefetchGames(), { timeout: 4000 });
+  if (document.readyState === 'complete') later();
+  else window.addEventListener('load', later, { once: true });
 }
 
 init();

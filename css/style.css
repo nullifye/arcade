@@ -912,6 +912,41 @@ html.appswarga-fullscreen.aw-close-visible .screen {
   min-height: 44px;
 }
 
+/* Main tapped: the button shows a spinner straight away while the game loads; other Main
+   buttons wait. */
+.btn.is-launching {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.is-launching::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid var(--primary-ink);
+  border-right-color: transparent;
+  animation: launch-spin 0.7s linear infinite;
+}
+
+.btn-gold.is-launching::after {
+  border-color: var(--gold-ink);
+  border-right-color: transparent;
+}
+
+body.launching .game-play,
+body.launching #continue-btn {
+  pointer-events: none;
+}
+
+@keyframes launch-spin {
+  to { rotate: 360deg; }
+}
+
 /* Akan Datang: the same card, faded, and nothing to press. */
 .game-card.soon {
   grid-template-columns: 56px 1fr;

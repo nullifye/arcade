@@ -17,7 +17,11 @@ themselves live in the [`warga-games`](https://github.com/nullifye/warga-games) 
 - **Sambung bermain**: the game played most recently, with how long ago.
 - **The game list** from `js/games.js`: a **Main** button on live games, an **Akan Datang** tag
   on the others. A game opens with `?dari=arked`, so it shows ‹ back to Arked instead of ✕.
-- **The version** at the bottom (`index.html`, now 1.2); tap it for a fresh reload. Bump it when
+  Main shows a spinner at once and opens the game without waiting for AppsWarga's storage.
+- **Prefetch:** once the hub is idle it fetches each live game's page and small files (listed in
+  warga-games `preload.json`) into the cache, a few at a time, so a tapped game opens almost at
+  once. Skipped with data saver on or on 2G.
+- **The version** at the bottom (`index.html`, now 1.4); tap it for a fresh reload. Bump it when
   the hub changes.
 
 ## Run locally
