@@ -1,0 +1,19 @@
+{
+  "id": "/arcade/",
+  "name": "Arked Warga",
+  "short_name": "Arked Warga",
+  "description": "Ruang permainan warga UiTM: satu profil, satu markah untuk semua permainan.",
+  "lang": "ms",
+  "start_url": "./",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#f3e5f5",
+  "theme_color": "#d9412b",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

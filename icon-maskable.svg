@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- icon.svg as a full square with the artwork at 80%, for maskable app icons (manifest.webmanifest). -->
+  <defs>
+    <path id="pad" d="M19 22h26a11 11 0 0 1 10.7 8.4l2.4 10.3A6 6 0 0 1 48 45.5L42.5 40h-21L16 45.5a6 6 0 0 1-10.1-4.8l2.4-10.3A11 11 0 0 1 19 22Z"/>
+    <path id="cross" d="M18.6 26.4h2.8v3.2h3.2v2.8h-3.2v3.2h-2.8v-3.2h-3.2v-2.8h3.2Z"/>
+  </defs>
+  <rect width="64" height="64" fill="#d9412b"/>
+  <!-- Flat 3D, like the games' buttons: every part sits on a darker copy of itself, a little lower.
+       The controller with its edge spans y 22–51.1, so -4.6 puts its middle at 32 (the centre). -->
+  <g transform="translate(32 32) scale(0.8) translate(-32 -32) translate(0 -4.6)">
+    <ellipse cx="32" cy="50.5" rx="23" ry="3" fill="#a3301f"/>
+    <use href="#pad" transform="translate(0 4)" fill="#d6b88f"/>
+    <use href="#pad" fill="#fff4e0"/>
+    <path d="M20 24.6h24" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+    <use href="#cross" transform="translate(0 1.6)" fill="#0f0705"/>
+    <use href="#cross" fill="#3a2019"/>
+    <circle cx="42" cy="30" r="2.7" fill="#8c2414"/>
+    <circle cx="42" cy="28.5" r="2.7" fill="#e5533a"/>
+    <circle cx="47.5" cy="35" r="2.7" fill="#0f0705"/>
+    <circle cx="47.5" cy="33.5" r="2.7" fill="#3a2019"/>
+  </g>
+</svg>

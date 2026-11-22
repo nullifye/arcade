@@ -974,6 +974,22 @@ body.launching #continue-btn {
   padding-top: 24px;
 }
 
+/* Pasang aplikasi (js/install.js): only when the browser can install the hub as an app. */
+.install-btn {
+  margin-bottom: 18px;
+}
+
+.install-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* How to install, in the help dialog: not inside AppsWarga, nor in the installed app. */
+html.in-appswarga .install-help,
+html.as-app .install-help {
+  display: none;
+}
+
 /* Narrow phones: buttons go under the text, full width, and the points stats under the total. */
 @media (max-width: 379px) {
   .points-card {

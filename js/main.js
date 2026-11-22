@@ -3,6 +3,7 @@ import { GAMES, launchUrl } from './games.js';
 import { fetchSummary, pointsConfigured } from './points.js';
 import { PROFILE_KEY, gameKey, migrateLocal, readShared, syncShared, writeShared } from './shared-store.js';
 import { formatPlayTime, formatPoints, timeAgo } from './format.js';
+import { initInstall } from './install.js';
 import { USER_TYPES, CAMPUSES, NON_UITM_CAMPUS, userTypeLabel } from './profile-options.js';
 import { enhanceSelect, refreshSelect, closeSelectSheet } from './select.js';
 import {
@@ -375,6 +376,7 @@ function init() {
   $('#help-close').addEventListener('click', () => $('#dlg-help').close());
   $('#btn-close-app').addEventListener('click', closeMiniApp);
   $('#btn-version').addEventListener('click', hardReload);
+  initInstall($('#btn-install'), toast);
 
   // Back from a game: the page may come from the back/forward cache, so read everything again.
   window.addEventListener('pageshow', (e) => {

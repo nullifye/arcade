@@ -8,6 +8,9 @@
   <meta name="theme-color" content="#d9412b">
   <script src="js/theme-boot.js"></script>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <!-- Installable app (js/install.js): opens in full screen from the home screen. -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap">
@@ -39,6 +42,12 @@
         <p>Satu profil, satu markah untuk semua permainan.</p>
       </div>
 
+      <!-- Shown only when this browser can install the app (js/install.js). -->
+      <button type="button" class="btn btn-ghost btn-wide install-btn" id="btn-install" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Pasang aplikasi
+      </button>
+
       <!-- Combined points (supabase/arked.sql). Hidden until they load. -->
       <section class="points-card" id="points" aria-labelledby="points-title" hidden>
         <div class="points-main">
@@ -66,7 +75,7 @@
       <h2 class="section-title">Permainan</h2>
       <ul class="game-grid" id="game-grid"></ul>
 
-      <button type="button" class="app-version" id="btn-version" aria-label="Versi 1.4. Ketik untuk muat semula.">Versi 1.4</button>
+      <button type="button" class="app-version" id="btn-version" aria-label="Versi 1.5. Ketik untuk muat semula.">Versi 1.5</button>
     </section>
   </div>
 
@@ -104,6 +113,8 @@
       <li><b>Satu profil</b> untuk semua permainan. Ubah nama, kategori atau kampus di sini.</li>
       <li><b>Jumlah markah</b> menggabungkan markah daripada setiap permainan.</li>
       <li>Permainan <b>Akan Datang</b> akan dibuka satu demi satu. Nantikan!</li>
+      <!-- Not inside AppsWarga or when already installed (css: .install-help). -->
+      <li class="install-help">Pasang sebagai aplikasi untuk main skrin penuh: tekan <b>Pasang aplikasi</b>, atau di iPhone, tekan <b>Kongsi</b> lalu <b>Tambah ke Skrin Utama</b>.</li>
     </ol>
     <div class="dialog-actions">
       <button type="button" class="btn btn-primary" id="help-close">Faham!</button>

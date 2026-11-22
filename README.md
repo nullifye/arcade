@@ -21,7 +21,13 @@ themselves live in the [`warga-games`](https://github.com/nullifye/warga-games) 
 - **Prefetch:** once the hub is idle it fetches each live game's page and small files (listed in
   warga-games `preload.json`) into the cache, a few at a time, so a tapped game opens almost at
   once. Skipped with data saver on or on 2G.
-- **The version** at the bottom (`index.html`, now 1.4); tap it for a fresh reload. Bump it when
+- **Pasang aplikasi:** the hub is an installable web app (`manifest.webmanifest`). Installed, it
+  opens from the home screen in full screen, and the games open in the same window (the manifest's
+  scope is the whole site, so `/warga-games/` is included). The button (`js/install.js`) shows
+  only when the browser can install it right now (Chrome, Edge, Samsung Internet), never inside
+  AppsWarga or in the installed app; the help dialog tells iPhone users to use Kongsi ▸ Tambah ke
+  Skrin Utama. There is no service worker, so the installed app needs a connection, like the site.
+- **The version** at the bottom (`index.html`, now 1.5); tap it for a fresh reload. Bump it when
   the hub changes.
 
 ## Run locally
@@ -35,9 +41,15 @@ npm test             # node --test tests/
 at `/warga-games/`, like GitHub Pages. On the dev server, games hosted on `nullifye.github.io`
 open from the local copy.
 
+The app icons are PNGs rendered from `icon.svg` (`icon-192.png`, `icon-512.png`,
+`apple-touch-icon.png`, full square as iOS rounds it) and `icon-maskable.svg`
+(`icon-maskable-512.png`, artwork at 80% for Android's masks). Re-render them if the icon
+changes. Never change the manifest's `id`: it is the installed app's identity.
+
 Tests cover the catalogue (`games.test.mjs`: every entry is valid, live games have an https URL,
 ids are unique, icon files exist, and launch links carry `?dari=arked`), points
-(`points.test.mjs`), formatting (`format.test.mjs`) and shared storage (`shared-store.test.mjs`).
+(`points.test.mjs`), formatting (`format.test.mjs`), shared storage (`shared-store.test.mjs`) and
+the app manifest and its icons (`manifest.test.mjs`).
 
 ## How the games share data
 
