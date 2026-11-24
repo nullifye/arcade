@@ -56,7 +56,12 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   ('memori',    'Memori',       100000,  500),
   -- Kejar Lapan: a point a metre (60 m/s at most, boosting) plus items and checkpoints; a
   -- perfect boosted run stays under 240 a second. A long run is a few thousand points.
-  ('kejar-lapan', 'Kejar Lapan',  100000, 300)
+  ('kejar-lapan', 'Kejar Lapan',  100000, 300),
+  -- Congkak: only a win scores, 55–100% of the AI level's maximum (Pakar: 1,000 for all 98
+  -- marbles). Every marble is sown one by one on screen (about 0.1 s each at the fast speed)
+  -- and a round moves hundreds of them, after the osom; even a quick win takes well over 20 s,
+  -- so 60 a second leaves room.
+  ('congkak',   'Congkak',        1000,   60)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,

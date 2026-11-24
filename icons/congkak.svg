@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Maroon lacquer, lighter along the top, as on the 3D board. -->
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a2b22"/>
+      <stop offset="1" stop-color="#5a1714"/>
+    </linearGradient>
+    <radialGradient id="pit" cx=".5" cy=".38" r=".62">
+      <stop offset="0" stop-color="#8f3a2b"/>
+      <stop offset="1" stop-color="#2a0806"/>
+    </radialGradient>
+    <!-- Glass marbles: a bright spot top-left, deep colour at the rim. -->
+    <radialGradient id="mg" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#b8f0cf"/><stop offset=".45" stop-color="#2fae6b"/><stop offset="1" stop-color="#0d5a33"/>
+    </radialGradient>
+    <radialGradient id="mb" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#c4e1ff"/><stop offset=".45" stop-color="#2f8fd8"/><stop offset="1" stop-color="#173f86"/>
+    </radialGradient>
+    <radialGradient id="mt" cx=".35" cy=".3" r=".75">
+      <stop offset="0" stop-color="#b6f2ef"/><stop offset=".45" stop-color="#16989a"/><stop offset="1" stop-color="#0a5052"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#2a6bb3"/>
+
+  <!-- The board, diagonal: a darker edge underneath, the lacquered top, rounded ends. -->
+  <g transform="rotate(-32 32 34)">
+    <rect x="3" y="27" width="58" height="19" rx="9.5" fill="#330a08"/>
+    <rect x="3" y="24" width="58" height="19" rx="9.5" fill="url(#wood)"/>
+    <!-- Stores at the ends, holes in two rows, each with a red rim. -->
+    <g fill="url(#pit)" stroke="#d2493a" stroke-width=".9">
+      <circle cx="11.6" cy="33.5" r="5.4"/>
+      <circle cx="52.4" cy="33.5" r="5.4"/>
+      <circle cx="22.8" cy="29.3" r="2.7"/><circle cx="28.9" cy="29.3" r="2.7"/><circle cx="35.1" cy="29.3" r="2.7"/>
+      <circle cx="41.2" cy="29.3" r="2.7"/>
+      <circle cx="22.8" cy="37.7" r="2.7"/><circle cx="28.9" cy="37.7" r="2.7"/><circle cx="35.1" cy="37.7" r="2.7"/>
+      <circle cx="41.2" cy="37.7" r="2.7"/>
+    </g>
+    <!-- Carved cream stars between the rows. -->
+    <g stroke="#ecd3a2" stroke-width=".55" stroke-linecap="round">
+      <path d="M25.85 32.4v2.2M24.75 33.5h2.2M25.05 32.7l1.6 1.6M26.65 32.7l-1.6 1.6"/>
+      <path d="M38.15 32.4v2.2M37.05 33.5h2.2M37.35 32.7l1.6 1.6M38.95 32.7l-1.6 1.6"/>
+    </g>
+    <!-- Marbles in the holes and a pile in the near store. -->
+    <circle cx="22.2" cy="29.8" r="1.45" fill="url(#mb)"/><circle cx="23.6" cy="28.9" r="1.45" fill="url(#mg)"/>
+    <circle cx="28.9" cy="29.6" r="1.45" fill="url(#mt)"/>
+    <circle cx="34.5" cy="29.9" r="1.45" fill="url(#mg)"/><circle cx="35.9" cy="29" r="1.45" fill="url(#mb)"/>
+    <circle cx="22.8" cy="38" r="1.45" fill="url(#mt)"/>
+    <circle cx="28.3" cy="38.2" r="1.45" fill="url(#mb)"/><circle cx="29.7" cy="37.3" r="1.45" fill="url(#mg)"/>
+    <circle cx="41.2" cy="38" r="1.45" fill="url(#mg)"/>
+    <circle cx="50.6" cy="34.6" r="1.5" fill="url(#mt)"/><circle cx="53.4" cy="35" r="1.5" fill="url(#mb)"/>
+    <circle cx="52" cy="32.2" r="1.5" fill="url(#mg)"/><circle cx="54.2" cy="32" r="1.5" fill="url(#mt)"/>
+    <circle cx="50.2" cy="31.8" r="1.5" fill="url(#mb)"/>
+  </g>
+
+  <!-- A big glass marble, top left, with its shine and a soft shadow. -->
+  <circle cx="16" cy="16.6" r="7.6" fill="#0b2748" opacity=".4"/>
+  <circle cx="15" cy="15" r="7.6" fill="url(#mg)"/>
+  <ellipse cx="12.2" cy="12" rx="2.6" ry="1.7" fill="#ffffff" opacity=".75" transform="rotate(-35 12.2 12)"/>
+</svg>

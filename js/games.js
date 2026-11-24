@@ -73,6 +73,15 @@ export const GAMES = [
     status: 'live',
   },
   {
+    id: 'congkak',
+    name: 'Congkak',
+    desc: 'Agih guli dan penuhkan rumah anda. Lawan AI.',
+    url: 'https://nullifye.github.io/warga-games/congkak/',
+    icon: 'icons/congkak.svg',
+    tags: ['Tradisional', 'Strategi'],
+    status: 'live',
+  },
+  {
     id: 'silang-kata',
     name: 'Silang Kata',
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
