@@ -84,7 +84,7 @@ export const GAMES = [
   {
     id: '9balls',
     name: '9-Ball',
-    desc: 'Biliar: masukkan bola 9 untuk menang. Lawan AI atau rakan.',
+    desc: 'Masukkan bola 9 untuk menang. Lawan AI atau rakan.',
     url: 'https://nullifye.github.io/warga-games/9balls/',
     icon: 'icons/9balls.svg',
     tags: ['Sukan', 'Strategi'],
