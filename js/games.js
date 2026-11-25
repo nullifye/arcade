@@ -91,6 +91,15 @@ export const GAMES = [
     status: 'live',
   },
   {
+    id: 'pemadam',
+    name: 'Pemadam',
+    desc: 'Jentik pemadam anda ke atas pemadam lawan. Lawan AI.',
+    url: 'https://nullifye.github.io/warga-games/pemadam/',
+    icon: 'icons/pemadam.svg',
+    tags: ['Tradisional', 'Refleks'],
+    status: 'live',
+  },
+  {
     id: 'silang-kata',
     name: 'Silang Kata',
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',

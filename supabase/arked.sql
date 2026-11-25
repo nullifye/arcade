@@ -65,7 +65,12 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- 9-Ball: only rounds against the AI are recorded: 100 a ball the player pots (9 at most) plus
   -- a win bonus of up to 900 (Susah), so 1,800 at most. Even a golden break (1,000) takes a few
   -- seconds to aim, pull and let the balls roll to a stop; 400 a second leaves room.
-  ('9balls',    '9-Ball',         2000,  400)
+  ('9balls',    '9-Ball',         2000,  400),
+  -- Pemadam: only a win scores: the AI level's maximum (Pakar: 1,000) less a tenth for each
+  -- point the AI got. A win needs 5 flicks that land on top, each played out and judged
+  -- (a point holds for 0.25 s) and then reset, after the osom; even a perfect 5–0 takes over
+  -- 15 s, so 100 a second leaves room.
+  ('pemadam',   'Pemadam',        1000,  100)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,
