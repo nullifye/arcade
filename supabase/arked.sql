@@ -70,7 +70,12 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- point the AI got. A win needs 5 flicks that land on top, each played out and judged
   -- (a point holds for 0.25 s) and then reset, after the osom; even a perfect 5–0 takes over
   -- 15 s, so 100 a second leaves room.
-  ('pemadam',   'Pemadam',        1000,  100)
+  ('pemadam',   'Pemadam',        1000,  100),
+  -- Congak Matematik: a right answer is the level's 10, 15 or 20, +50% within 2.5 s, times a
+  -- combo of up to ×4 (Susah: 120 at most). Each sum shows for at least 0.9 s (written out, then
+  -- the feedback), so a 60 s round has at most 66 sums (a Nyawa round stops at 60): 7,920 at
+  -- most, and 120 / 0.9 s ≈ 133 a second.
+  ('congak',    'Congak Matematik', 8000, 150)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,

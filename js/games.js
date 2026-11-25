@@ -100,6 +100,15 @@ export const GAMES = [
     status: 'live',
   },
   {
+    id: 'congak',
+    name: 'Congak Matematik',
+    desc: 'Kira di kepala dan jawab secepat mungkin di papan hitam.',
+    url: 'https://nullifye.github.io/warga-games/congak/',
+    icon: 'icons/congak.svg',
+    tags: ['Nombor', 'Harian'],
+    status: 'live',
+  },
+  {
     id: 'silang-kata',
     name: 'Silang Kata',
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
