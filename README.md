@@ -27,7 +27,7 @@ themselves live in the [`warga-games`](https://github.com/nullifye/warga-games) 
   only when the browser can install it right now (Chrome, Edge, Samsung Internet), never inside
   AppsWarga or in the installed app; the help dialog tells iPhone users to use Kongsi ▸ Tambah ke
   Skrin Utama. There is no service worker, so the installed app needs a connection, like the site.
-- **The version** at the bottom (`index.html`, now 1.6); tap it for a fresh reload. Bump it when
+- **The version** at the bottom (`index.html`, now 1.7); tap it for a fresh reload. Bump it when
   the hub changes.
 
 ## Run locally

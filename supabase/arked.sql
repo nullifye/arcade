@@ -61,7 +61,11 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- marbles). Every marble is sown one by one on screen (about 0.1 s each at the fast speed)
   -- and a round moves hundreds of them, after the osom; even a quick win takes well over 20 s,
   -- so 60 a second leaves room.
-  ('congkak',   'Congkak',        1000,   60)
+  ('congkak',   'Congkak',        1000,   60),
+  -- 9-Ball: only rounds against the AI are recorded: 100 a ball the player pots (9 at most) plus
+  -- a win bonus of up to 900 (Susah), so 1,800 at most. Even a golden break (1,000) takes a few
+  -- seconds to aim, pull and let the balls roll to a stop; 400 a second leaves room.
+  ('9balls',    '9-Ball',         2000,  400)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,
