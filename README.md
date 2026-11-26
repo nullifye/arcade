@@ -11,8 +11,10 @@ themselves live in the [`warga-games`](https://github.com/nullifye/warga-games) 
 Laid out like a native Android app: an app bar, a search field and a row of filter chips stay
 pinned at the top while the list scrolls.
 
-- **App bar**: the title, the profile in one line under it (nickname · category · campus; tap it
-  or the avatar to change it), the help button, and inside AppsWarga the close button.
+- **App bar**: the title and the profile in one line under it (nickname · category · campus; tap
+  it to change it), then at the right the help button and the player's avatar. The avatar opens a
+  menu: the profile, **Ubah profil**, and inside AppsWarga **Keluar** (it closes the
+  webapp). A tap outside, Esc or scrolling closes it; ↑ ↓ move between its items.
 - **Search** ("Cari permainan"): every word typed must start a word of a game's name,
   description, labels or category, ignoring case and accents. Esc or ✕ clears it; "/" jumps to
   it on a keyboard.

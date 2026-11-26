@@ -747,6 +747,7 @@ html.appswarga-fullscreen.aw-close-visible .hub-top {
 }
 
 .appbar {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -824,13 +825,100 @@ html.appswarga-fullscreen.aw-close-visible .hub-top {
   background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
+
 .avatar-btn {
   width: 40px;
   height: 40px;
-  margin: 0 4px;
+  margin: 0 2px 0 4px;
   border: 0;
   font-size: 1rem;
   box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+/* The avatar's menu, dropping from it at the right, as an Android popup menu. */
+.menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 232px;
+  max-width: calc(100vw - 32px);
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.35), 0 0 0 1px color-mix(in srgb, var(--line) 40%, transparent);
+  transform-origin: top right;
+  animation: menu-in 0.14s ease-out;
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: scale(0.92); }
+}
+
+.menu-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+}
+
+.menu-head > span:last-child {
+  display: grid;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.menu-head strong,
+.menu-head small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-head small {
+  font-size: 0.76rem;
+  color: var(--ink-2);
+}
+
+.menu-item {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.menu-item svg {
+  width: 20px;
+  height: 20px;
+  color: var(--ink-2);
+}
+
+.menu-item:active,
+.menu-item:focus-visible {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+@media (hover: hover) {
+  .menu-item:hover {
+    background: color-mix(in srgb, var(--primary) 7%, transparent);
+  }
+}
+
+.menu-exit,
+.menu-exit svg {
+  color: var(--bad);
 }
 
 /* The search: a filled pill. */

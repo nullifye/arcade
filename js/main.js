@@ -174,6 +174,58 @@ function saveProfileFromForm(e) {
   if (next) next();
 }
 
+// ---------- the avatar's menu ----------
+
+function openProfileMenu() {
+  const menu = $('#profile-menu');
+  const p = loadProfile();
+  $('#menu-avatar').textContent = $('#chip-avatar').textContent;
+  $('#menu-name').textContent = p ? p.nickname : 'Tetapkan profil';
+  $('#menu-meta').textContent = $('#chip-meta').textContent;
+  $('#menu-profile').lastChild.textContent = p ? ' Ubah profil' : ' Tetapkan profil';
+  menu.hidden = false;
+  $('#btn-avatar').setAttribute('aria-expanded', 'true');
+  menu.querySelector('.menu-item')?.focus({ preventScroll: true });
+}
+
+function closeProfileMenu({ focus = false } = {}) {
+  const menu = $('#profile-menu');
+  if (menu.hidden) return;
+  menu.hidden = true;
+  $('#btn-avatar').setAttribute('aria-expanded', 'false');
+  if (focus) $('#btn-avatar').focus({ preventScroll: true });
+}
+
+/** The avatar opens a menu: the profile, Ubah profil, and inside AppsWarga, Keluar. */
+function initProfileMenu() {
+  const menu = $('#profile-menu');
+  $('#btn-avatar').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (menu.hidden) openProfileMenu();
+    else closeProfileMenu();
+  });
+  $('#menu-profile').addEventListener('click', () => {
+    closeProfileMenu();
+    afterProfile = null;
+    openProfile();
+  });
+  // A tap anywhere else, Esc, or scrolling closes it.
+  document.addEventListener('pointerdown', (e) => {
+    if (!menu.hidden && !menu.contains(e.target) && !$('#btn-avatar').contains(e.target)) closeProfileMenu();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (menu.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeProfileMenu({ focus: true }); return; }
+    // Up and down move between the items.
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const items = [...menu.querySelectorAll('.menu-item')].filter((b) => b.offsetParent);
+    const i = items.indexOf(document.activeElement);
+    items[(i + (e.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length]?.focus();
+    e.preventDefault();
+  });
+  window.addEventListener('scroll', () => closeProfileMenu(), { passive: true });
+}
+
 function renderProfileChip() {
   const p = loadProfile();
   $('#chip-avatar').textContent = p ? p.nickname.charAt(0).toUpperCase() : '?';
@@ -543,12 +595,11 @@ function init() {
     refreshSelect($('#pf-campus'));
   });
 
-  for (const id of ['#profile-chip', '#btn-avatar']) {
-    $(id).addEventListener('click', () => {
-      afterProfile = null;
-      openProfile();
-    });
-  }
+  $('#profile-chip').addEventListener('click', () => {
+    afterProfile = null;
+    openProfile();
+  });
+  initProfileMenu();
   initSearch();
   $('#profile-form').addEventListener('submit', saveProfileFromForm);
   $('#pf-cancel').addEventListener('click', () => $('#dlg-profile').close('cancel'));
@@ -561,7 +612,7 @@ function init() {
   $('#points').addEventListener('click', openPointsDetail);
   $('#pd-close').addEventListener('click', () => $('#dlg-points').close());
   $('#help-close').addEventListener('click', () => $('#dlg-help').close());
-  $('#btn-close-app').addEventListener('click', closeMiniApp);
+  $('#btn-close-app').addEventListener('click', () => { closeProfileMenu(); closeMiniApp(); });
   $('#btn-version').addEventListener('click', hardReload);
   initInstall($('#btn-install'), toast);
 

@@ -35,10 +35,22 @@
             <button type="button" class="icon-btn icon-btn-flat" id="btn-help" aria-label="Tentang Arked Warga">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8v.4M12 16.8v.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             </button>
-            <button type="button" class="avatar avatar-btn" id="btn-avatar" aria-label="Profil pemain"><span id="chip-avatar" aria-hidden="true">?</span></button>
+            <button type="button" class="avatar avatar-btn" id="btn-avatar" aria-label="Menu profil" aria-haspopup="menu" aria-expanded="false" aria-controls="profile-menu"><span id="chip-avatar" aria-hidden="true">?</span></button>
+          </div>
+          <!-- The avatar's menu: the profile, Ubah profil, and inside AppsWarga, Keluar. -->
+          <div class="menu" id="profile-menu" role="menu" aria-label="Menu profil" hidden>
+            <div class="menu-head">
+              <span class="avatar" id="menu-avatar" aria-hidden="true">?</span>
+              <span><strong id="menu-name">Tetapkan profil</strong><small id="menu-meta"></small></span>
+            </div>
+            <button type="button" class="menu-item" id="menu-profile" role="menuitem">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4zM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Ubah profil
+            </button>
             <!-- Only inside AppsWarga (html.in-appswarga): leaves the webapp. -->
-            <button type="button" class="icon-btn icon-btn-flat" id="btn-close-app" aria-label="Tutup Arked Warga">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            <button type="button" class="menu-item menu-exit" id="btn-close-app" role="menuitem">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Keluar
             </button>
           </div>
         </header>
