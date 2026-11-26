@@ -8,16 +8,36 @@ themselves live in the [`warga-games`](https://github.com/nullifye/warga-games) 
 
 ## What the hub shows
 
-- **Profile chip**: nickname, category (Pelajar, Staf, Alumni, Awam) and campus, shared by every
+Laid out like a native Android app: an app bar, a search field and a row of filter chips stay
+pinned at the top while the list scrolls.
+
+- **App bar**: the title, the profile in one line under it (nickname · category · campus; tap it
+  or the avatar to change it), the help button, and inside AppsWarga the close button.
+- **Search** ("Cari permainan"): every word typed must start a word of a game's name,
+  description, labels or category, ignoring case and accents. Esc or ✕ clears it; "/" jumps to
+  it on a keyboard.
+- **Filter chips**: Semua, each category with its number of playable games, and Cabaran Harian
+  (games labelled Harian). The chip chosen is kept for the visit (back from a game).
+- **The list**: with Semua and no search, a section per category (`CATEGORIES` in `js/games.js`:
+  Asah Minda, Arked, Kata, Tradisional, Teka-teki, Sukan), then Akan Datang; with a chip or a search, one list
+  of what matches (playable games first) with a count, or "Tiada permainan untuk …". Each game is
+  a row: icon, name, two lines of description, labels (Cabaran Harian in gold), and **Main**;
+  the whole row opens the game. Filtering and search are in `js/catalog.js` (unit-tested).
+- **Profile**: nickname, category (Pelajar, Staf, Alumni, Awam) and campus, shared by every
   game. Inside AppsWarga, only the categories the app allows for the signed-in user can be
   chosen; a saved profile with another category is switched to an allowed one.
-- **Jumlah markah**: the player's total points, rounds and play time across all games, with a
-  per-game breakdown once they have played more than one (`arked_player_summary`). Hidden when
-  offline or before the database is set up.
+- **Jumlah markah**: a card of fixed size, however many games were played: the player's total
+  points, then rounds, play time and games played, and the top four games' icons (+N for the
+  rest) with their names, highest first (`arked_player_summary`). Tap it (**Butiran**) for every game
+  played, highest first, under the totals as four small stats, each with its rounds, play time and
+  a bar against the top game. It keeps its place while loading, so nothing below moves: it opens
+  with the last points loaded on the phone, or the first time as a shimmering placeholder of the
+  same size. Hidden without a profile, or when the first load fails with nothing to show.
 - **Sambung bermain**: the game played most recently, with how long ago.
-- **The game list** from `js/games.js`: a **Main** button on live games, an **Akan Datang** tag
-  on the others. A game opens with `?dari=arked`, so it shows ‹ back to Arked instead of ✕.
-  Main shows a spinner at once and opens the game without waiting for AppsWarga's storage.
+- **Opening a game**: with `?dari=arked`, so it shows ‹ back to Arked instead of ✕. Main shows a
+  spinner at once and opens the game without waiting for AppsWarga's storage. The points and
+  Sambung bermain cards (and Pasang) show only on the full list, not while searching or
+  filtering.
 - **Prefetch:** once the hub is idle it fetches each live game's page and small files (listed in
   warga-games `preload.json`) into the cache, a few at a time, so a tapped game opens almost at
   once. Skipped with data saver on or on 2G.
@@ -27,7 +47,7 @@ themselves live in the [`warga-games`](https://github.com/nullifye/warga-games) 
   only when the browser can install it right now (Chrome, Edge, Samsung Internet), never inside
   AppsWarga or in the installed app; the help dialog tells iPhone users to use Kongsi ▸ Tambah ke
   Skrin Utama. There is no service worker, so the installed app needs a connection, like the site.
-- **The version** at the bottom (`index.html`, now 1.10); tap it for a fresh reload. Bump it when
+- **The version** at the bottom (`index.html`, now 1.11); tap it for a fresh reload. Bump it when
   the hub changes.
 
 ## Run locally
@@ -87,7 +107,8 @@ Games live in the `warga-games` repo (`https://nullifye.github.io/warga-games/<g
 README covers building one with the shared code. A game on another host (e.g. Vercel) works
 too: copy `js/shared-store.js`, honour `?dari=arked`, and call `arked_record`.
 
-1. Add an entry to `js/games.js` (`id`, `name`, `desc`, `url`, `icon`, up to 3 `tags`,
+1. Add an entry to `js/games.js` (`id`, `name`, `desc`, `url`, `icon`, a `category` from
+   `CATEGORIES`, up to 3 `tags` (`Harian` if it has a Cabaran Harian),
    `status: 'soon'` for an Akan Datang card) and its icon to `icons/<id>.svg`. Icons are 64×64
    SVGs on the purple `#4a2380` rounded square (`rx="14"`); use a copy of the game's own
    `icon.svg`. `npm test` checks the entry.

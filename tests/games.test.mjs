@@ -19,13 +19,15 @@ test('at least one game is live', () => {
 });
 
 test('gameProblems catches bad entries', () => {
-  const ok = { id: 'x', name: 'X', desc: 'd', icon: 'icons/x.svg', tags: [], status: 'live', url: 'https://a.vercel.app/' };
+  const ok = { id: 'x', name: 'X', desc: 'd', icon: 'icons/x.svg', category: 'arked', tags: [], status: 'live', url: 'https://a.vercel.app/' };
   assert.deepEqual(gameProblems(ok), []);
   assert.ok(gameProblems({ ...ok, id: 'Bad Id' }).length);
   assert.ok(gameProblems({ ...ok, url: 'http://a.vercel.app/' }).length);
   assert.ok(gameProblems({ ...ok, url: null }).length);
   assert.deepEqual(gameProblems({ ...ok, status: 'soon', url: null }), []);
   assert.ok(gameProblems({ ...ok, status: 'beta' }).length);
+  assert.ok(gameProblems({ ...ok, category: 'lain' }).length);
+  assert.ok(gameProblems({ ...ok, category: undefined }).length);
 });
 
 test('launchUrl adds ?dari=arked and keeps other hosts as they are', () => {

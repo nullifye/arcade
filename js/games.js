@@ -4,9 +4,21 @@
 //   name    shown on the card
 //   desc    one short sentence
 //   url     the game's https address, on any host listed in AppsWarga's allowed hosts
-//   icon    square image in this repo (icons/), shown at 56 px
-//   tags    up to 3 short labels
-//   status  'live' (playable) or 'soon' (an "Akan Datang" card, not playable)
+//   icon    square image in this repo (icons/), shown at 48 px
+//   category  one of CATEGORIES: the section it is listed under, and its filter chip
+//   tags    up to 3 short labels shown on its row and matched by the search ('Harian': it has a
+//           Cabaran Harian, and is listed under that chip)
+//   status  'live' (playable) or 'soon' (listed under Akan Datang, not playable)
+
+/** The sections of the list, in order, and the filter chips. */
+export const CATEGORIES = [
+  { id: 'minda', name: 'Asah Minda' }, // brain training: memory, mental arithmetic
+  { id: 'arked', name: 'Arked' }, // quick reflexes, classic arcade
+  { id: 'kata', name: 'Kata' }, // word games
+  { id: 'tradisional', name: 'Tradisional' }, // Malaysian traditional and school-era games
+  { id: 'teka-teki', name: 'Teka-teki' }, // puzzles: numbers, blocks, matching
+  { id: 'sukan', name: 'Sukan' }, // sports
+];
 
 export const GAMES = [
   {
@@ -15,7 +27,8 @@ export const GAMES = [
     desc: 'Pecahkan kod nombor dan temui frasa tentang UiTM dan Malaysia.',
     url: 'https://nullifye.github.io/warga-games/teka-kata/',
     icon: 'icons/teka-kata.svg',
-    tags: ['Kata', 'Kriptogram'],
+    category: 'kata',
+    tags: ['Harian', 'Kriptogram'],
     status: 'live',
   },
   {
@@ -24,7 +37,8 @@ export const GAMES = [
     desc: 'Makan, membesar, dan jangan langgar diri sendiri.',
     url: 'https://nullifye.github.io/warga-games/ular/',
     icon: 'icons/ular.svg',
-    tags: ['Arked', 'Refleks'],
+    category: 'arked',
+    tags: ['Refleks', 'Klasik'],
     status: 'live',
   },
   {
@@ -33,7 +47,8 @@ export const GAMES = [
     desc: 'Teka perkataan lima huruf dalam enam cubaan.',
     url: 'https://nullifye.github.io/warga-games/duga-kata/',
     icon: 'icons/duga-kata.svg',
-    tags: ['Kata', 'Harian'],
+    category: 'kata',
+    tags: ['Harian', 'Logik'],
     status: 'live',
   },
   {
@@ -42,7 +57,8 @@ export const GAMES = [
     desc: 'Pecut ke destinasi sebelum pukul 8:00.',
     url: 'https://nullifye.github.io/warga-games/kejar-lapan/',
     icon: 'icons/kejar-lapan.svg',
-    tags: ['Arked', 'Refleks'],
+    category: 'arked',
+    tags: ['Harian', 'Refleks', '3D'],
     status: 'live',
   },
   {
@@ -51,7 +67,8 @@ export const GAMES = [
     desc: 'Gabungkan nombor hingga mencapai 2048.',
     url: 'https://nullifye.github.io/warga-games/2048/',
     icon: 'icons/2048.svg',
-    tags: ['Teka-teki', 'Nombor'],
+    category: 'teka-teki',
+    tags: ['Nombor', 'Santai'],
     status: 'live',
   },
   {
@@ -60,7 +77,8 @@ export const GAMES = [
     desc: 'Susun kepingan dan lengkapkan baris atau lajur.',
     url: 'https://nullifye.github.io/warga-games/blok/',
     icon: 'icons/blok.svg',
-    tags: ['Teka-teki'],
+    category: 'teka-teki',
+    tags: ['Santai', 'Strategi'],
     status: 'live',
   },
   {
@@ -69,34 +87,38 @@ export const GAMES = [
     desc: 'Cari pasangan kad sebelum masa tamat.',
     url: 'https://nullifye.github.io/warga-games/memori/',
     icon: 'icons/memori.svg',
-    tags: ['Ingatan'],
+    category: 'minda',
+    tags: ['Ingatan', 'Bermasa'],
     status: 'live',
   },
   {
     id: 'congkak',
     name: 'Congkak',
-    desc: 'Agih guli dan penuhkan rumah anda. Lawan AI.',
+    desc: 'Agih guli dan penuhkan rumah anda sebelum lawan.',
     url: 'https://nullifye.github.io/warga-games/congkak/',
     icon: 'icons/congkak.svg',
-    tags: ['Tradisional', 'Strategi'],
+    category: 'tradisional',
+    tags: ['Lawan AI', 'Strategi', '3D'],
     status: 'live',
   },
   {
     id: '9balls',
     name: '9-Ball',
-    desc: 'Masukkan bola 9 untuk menang. Lawan AI atau rakan.',
+    desc: 'Pukul bola mengikut urutan dan masukkan bola 9 untuk menang.',
     url: 'https://nullifye.github.io/warga-games/9balls/',
     icon: 'icons/9balls.svg',
-    tags: ['Sukan', 'Strategi'],
+    category: 'sukan',
+    tags: ['Lawan AI', '2 Pemain', 'Fizik'],
     status: 'live',
   },
   {
     id: 'pemadam',
     name: 'Pemadam',
-    desc: 'Jentik pemadam anda ke atas pemadam lawan. Lawan AI.',
+    desc: 'Jentik pemadam anda supaya mendarat di atas pemadam lawan.',
     url: 'https://nullifye.github.io/warga-games/pemadam/',
     icon: 'icons/pemadam.svg',
-    tags: ['Tradisional', 'Refleks'],
+    category: 'tradisional',
+    tags: ['Lawan AI', 'Fizik', '3D'],
     status: 'live',
   },
   {
@@ -105,7 +127,8 @@ export const GAMES = [
     desc: 'Kira di kepala dan jawab secepat mungkin di papan hitam.',
     url: 'https://nullifye.github.io/warga-games/congak/',
     icon: 'icons/congak.svg',
-    tags: ['Nombor', 'Harian'],
+    category: 'minda',
+    tags: ['Harian', 'Matematik', 'Bermasa'],
     status: 'live',
   },
   {
@@ -114,7 +137,8 @@ export const GAMES = [
     desc: 'Sejajarkan tiga burung sama warna sebelum kelas penuh.',
     url: 'https://nullifye.github.io/warga-games/letup-letup/',
     icon: 'icons/letup-letup.svg',
-    tags: ['Arked', 'Harian'],
+    category: 'teka-teki',
+    tags: ['Harian', 'Padan 3', 'Refleks'],
     status: 'live',
   },
   {
@@ -123,7 +147,8 @@ export const GAMES = [
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
     url: null,
     icon: 'icons/silang-kata.svg',
-    tags: ['Kata'],
+    category: 'kata',
+    tags: [],
     status: 'soon',
   },
   {
@@ -132,7 +157,8 @@ export const GAMES = [
     desc: 'Teka-teki logik nombor yang mengasah minda.',
     url: null,
     icon: 'icons/susun-nombor.svg',
-    tags: ['Logik'],
+    category: 'teka-teki',
+    tags: ['Nombor', 'Logik'],
     status: 'soon',
   },
 ];
@@ -149,6 +175,7 @@ export function gameProblems(g) {
   if (!g.desc?.trim()) out.push('desc is required');
   if (!['live', 'soon'].includes(g.status)) out.push("status must be 'live' or 'soon'");
   if (!g.icon?.startsWith('icons/')) out.push('icon must be in icons/');
+  if (!CATEGORIES.some((c) => c.id === g.category)) out.push(`category must be one of ${CATEGORIES.map((c) => c.id).join(', ')}`);
   if (!Array.isArray(g.tags) || g.tags.length > 3) out.push('tags: up to 3');
   if (g.status === 'live') {
     let url = null;

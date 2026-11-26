@@ -690,105 +690,620 @@ html.appswarga-fullscreen.aw-close-visible .screen {
   }
 }
 
-/* ---------- hub ---------- */
-.hub-brand {
-  text-align: center;
-  margin: 26px 0 20px;
-  animation: rise 0.4s both ease-out;
+/* ---------- hub: a native-feeling Android app ----------
+   An app bar (the title, the profile in a line, the actions), a search field and a row of filter
+   chips stay pinned at the top; below, the points and the last game, then the games as list rows
+   in sections by category (js/catalog.js). */
+.screen-hub {
+  padding-top: 0;
 }
 
-.hub-brand h1 {
-  font-size: clamp(2rem, 9vw, 2.6rem);
-  line-height: 1.05;
+.hub-top {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 -16px;
+  padding: max(10px, env(safe-area-inset-top)) 16px 10px;
+}
+
+/* Its background spans the whole window, not only the 520px column (on a tablet or a computer
+   the bar would otherwise end in hard edges at the column's sides). At the top of the page it
+   is see-through over the page's own background; once the list scrolls under it, it turns solid
+   with a soft shadow, as an Android app bar lifts. */
+.hub-top::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  translate: -50% 0;
+  background: var(--bg);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.hub-top.scrolled::before {
+  opacity: 1;
+}
+
+/* Under AppsWarga's status bar (full screen): the pinned bar takes the padding, not the screen. */
+html.appswarga-fullscreen .screen-hub,
+html.appswarga-fullscreen.aw-close-visible .screen-hub {
+  padding-top: 0;
+}
+
+html.appswarga-fullscreen .hub-top {
+  padding-top: calc(var(--appswarga-safe-top, 0px) + 10px);
+}
+
+html.appswarga-fullscreen.aw-close-visible .hub-top {
+  padding-top: calc(var(--appswarga-safe-top, 0px) + 56px);
+}
+
+.hub-top.scrolled::before {
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 60%, transparent), 0 8px 16px -12px rgba(0, 0, 0, 0.35);
+}
+
+.appbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+}
+
+.appbar-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.appbar-title h1 {
   margin: 0;
+  font-size: 1.45rem;
   font-weight: 800;
   letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
-.hub-brand h1 span {
+.appbar-title h1 span {
   color: var(--primary);
 }
 
-.hub-brand p {
+/* The profile, as one line under the title: name, then category and campus. Tap to change. */
+.appbar-profile {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 100%;
+  margin-top: 1px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-size: 0.82rem;
   color: var(--ink-2);
-  margin: 10px auto 0;
-  max-width: 30ch;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-/* Combined points: one solid card in the theme colour. */
-.points-card {
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
-  color: var(--primary-ink);
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: var(--shadow);
+.appbar-profile strong {
+  font-weight: 700;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: none;
+  max-width: 55%;
+}
+
+.appbar-profile small {
+  font-size: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.appbar-profile small::before {
+  content: '· ';
+}
+
+.appbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+
+/* Plain round icon buttons in the app bar (no card behind them). */
+.icon-btn-flat {
+  background: none;
+  box-shadow: none;
+  color: var(--ink-2);
+}
+
+.icon-btn-flat:active {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.avatar-btn {
+  width: 40px;
+  height: 40px;
+  margin: 0 4px;
+  border: 0;
+  font-size: 1rem;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+/* The search: a filled pill. */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  margin-top: 6px;
+  padding: 0 6px 0 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 55%, transparent);
+  color: var(--muted);
+}
+
+.search:focus-within {
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: none;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.search input::placeholder {
+  color: var(--muted);
+}
+
+.search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-clear {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px 12px;
-  align-items: end;
+  place-items: center;
+  background: none;
+  color: var(--ink-2);
+}
+
+/* The filter chips: one row that scrolls sideways. */
+.chips {
+  display: flex;
+  gap: 8px;
+  margin: 10px -16px 0;
+  padding: 0 16px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-padding: 0 16px;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tablets and computers: a wider column (a 520px strip leaves most of an iPad empty). */
+@media (min-width: 760px) {
+  #app {
+    max-width: 720px;
+  }
+}
+
+/* Wide screens: the chips wrap onto a second line instead of scrolling off the column. */
+@media (min-width: 600px) {
+  .chips {
+    flex-wrap: wrap;
+    margin: 10px 0 0;
+    padding: 0;
+    overflow: visible;
+  }
+}
+
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 70%, transparent);
+  color: var(--ink-2);
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.chip-count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+
+.chip[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--primary) 16%, var(--surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 45%, transparent);
+  color: var(--primary);
+}
+
+.chip[aria-pressed='true']::before {
+  content: '';
+  width: 12px;
+  height: 7px;
+  margin: -3px 0 0 -2px;
+  border: solid currentColor;
+  border-width: 0 0 2.2px 2.2px;
+  rotate: -45deg;
+}
+
+/* Pasang aplikasi: a slim card under the bar, only when the browser can install the hub. */
+.install-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 4px 0 4px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 30%, transparent);
+  color: var(--primary);
+  text-align: left;
+}
+
+.install-card img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  flex: none;
+}
+
+.install-card span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.install-card strong {
+  color: var(--ink);
+}
+
+.install-card small {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+}
+
+/* While searching or filtering, only the results show under the bar. */
+.screen-hub.filtering .install-card {
+  display: none;
+}
+
+.hub-home {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* Combined points: a tonal card of fixed size (the total, three stats, the top games' icons);
+   tap it for the points per game (#dlg-points). */
+.points-card {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px 12px;
+  border: 0;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--primary) 16%, transparent), transparent 60%),
+    var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 22%, transparent);
+  color: var(--ink);
+  text-align: left;
   animation: rise 0.35s both ease-out;
 }
 
-.points-main h2 {
-  margin: 0;
-  font-size: 0.75rem;
+.points-card:active {
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--primary) 22%, transparent), transparent 60%),
+    var(--surface);
+}
+
+.points-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.points-label {
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  opacity: 0.85;
+  color: var(--ink-2);
 }
 
-.points-main strong {
-  display: block;
-  font-size: 2.1rem;
-  font-weight: 800;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.points-stats {
-  display: flex;
-  gap: 14px;
-  margin: 0;
-  text-align: right;
-}
-
-.points-stats dt {
-  font-size: 0.7rem;
-  opacity: 0.85;
-}
-
-.points-stats dd {
-  margin: 2px 0 0;
+.points-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.8rem;
   font-weight: 700;
+  color: var(--primary);
+}
+
+.points-more svg {
+  width: 16px;
+  height: 16px;
+}
+
+.points-total {
+  margin-top: -6px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--primary);
   font-variant-numeric: tabular-nums;
 }
 
-.points-games {
-  grid-column: 1 / -1;
-  list-style: none;
-  margin: 0;
-  padding: 8px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
+/* Loading the first time: the same card, its numbers as shimmering placeholders of their size. */
+.points-card.loading {
+  pointer-events: none;
+}
+
+.points-card.loading .points-more {
+  visibility: hidden;
+}
+
+.points-card.loading .points-total,
+.points-card.loading .points-stats b,
+.points-card.loading .points-games::before {
+  color: transparent;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--track) 0%, color-mix(in srgb, var(--track) 40%, var(--surface)) 50%, var(--track) 100%) 0 0 / 200% 100%;
+  animation: points-shimmer 1.2s ease-in-out infinite;
+}
+
+.points-card.loading .points-total {
+  width: 7ch;
+}
+
+.points-card.loading .points-stats b {
+  display: inline-block;
+  width: 3.5ch;
+}
+
+.points-card.loading .points-games > * {
+  display: none;
+}
+
+.points-card.loading .points-games::before {
+  content: '';
+  width: 70%;
+  height: 28px;
+}
+
+@keyframes points-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .points-card.loading .points-total,
+  .points-card.loading .points-stats b,
+  .points-card.loading .points-games::before {
+    animation: none;
+  }
+}
+
+/* Three equal stats, divided by hairlines. */
+.points-stats {
   display: grid;
-  gap: 4px;
-  font-size: 0.85rem;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 8px 0;
+  border-block: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
 }
 
-.points-games li {
+.points-stats > span {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+}
+
+.points-stats > span + span {
+  border-left: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+}
+
+.points-stats b {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.points-stats small {
+  font-size: 0.7rem;
+  color: var(--ink-2);
+}
+
+/* The top games: icons overlapping, then the top game's name. */
+.points-games {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
-.points-games span {
+.pts-stack {
+  display: flex;
+  flex: none;
+  padding-left: 6px;
+}
+
+.pts-stack .pts-icon {
+  width: 28px;
+  height: 28px;
+  margin-left: -6px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.pts-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.pts-icon-blank,
+.pts-more {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--primary) 16%, var(--surface));
+  color: var(--primary);
+}
+
+.pts-top {
+  min-width: 0;
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Butiran: the totals as four small stats, then the points per game, highest first, in a
+   scrolling list. */
+.pd-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 12px 0 0;
+}
+
+.pd-stats div {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 9%, var(--surface));
+  min-width: 0;
+}
+
+.pd-stats dt {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.pd-stats dd {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.points-games b {
+.points-dialog .pd-list {
+  list-style: none;
+  margin: 10px -6px 0;
+  padding: 0 6px;
+  max-height: min(55vh, 440px);
+  overflow-y: auto;
+  display: grid;
+  gap: 2px;
+}
+
+.pd-row {
+  display: grid;
+  grid-template-columns: 18px 40px 1fr 4.5em; /* a fixed column for the points, so the bars line up */
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.pd-row + .pd-row {
+  border-top: 1px solid color-mix(in srgb, var(--line) 40%, transparent);
+}
+
+.pd-rank {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-align: center;
+}
+
+.pd-row .pts-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.pd-body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pd-body strong {
+  font-size: 0.92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pd-body small {
+  font-size: 0.72rem;
+  color: var(--ink-2);
+}
+
+.pd-bar {
+  height: 5px;
+  margin-top: 3px;
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.pd-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), var(--primary-2));
+}
+
+.pd-points {
+  text-align: right;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
@@ -839,43 +1354,84 @@ html.appswarga-fullscreen.aw-close-visible .screen {
   min-height: 44px;
 }
 
-.section-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin: 22px 2px 10px;
+
+/* ---------- the game list ---------- */
+.game-list {
+  display: grid;
+  gap: 18px;
+  margin-top: 16px;
 }
 
-.game-grid {
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 4px 8px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.section-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.results-count {
+  margin: 0 4px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* A section's games: rows in one rounded card, with hairlines between them. */
+.game-rows {
   list-style: none;
   margin: 0;
   padding: 0;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 40%, transparent);
+  overflow: hidden;
+}
+
+.game-row {
+  position: relative;
   display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
   gap: 12px;
+  padding: 12px 14px;
+  min-height: 72px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.game-row + .game-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 74px;
+  right: 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 45%, transparent);
+}
+
+.game-row:active {
+  background: color-mix(in srgb, var(--primary) 7%, transparent);
+}
+
+@media (hover: hover) {
+  .game-row:hover {
+    background: color-mix(in srgb, var(--primary) 5%, transparent);
+  }
 }
 
 .game-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   flex: none;
   display: block;
-}
-
-.continue-card .game-icon {
-  width: 52px;
-  height: 52px;
-}
-
-.game-card {
-  display: grid;
-  grid-template-columns: 56px 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  min-width: 0;
 }
 
 .game-body {
@@ -884,32 +1440,56 @@ html.appswarga-fullscreen.aw-close-visible .screen {
 
 .game-body h3 {
   margin: 0;
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .game-desc {
-  margin: 3px 0 0;
-  font-size: 0.82rem;
-  line-height: 1.4;
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
   color: var(--ink-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .game-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 4px;
+  margin-top: 5px;
 }
 
 .game-tags .tag {
-  font-size: 0.66rem;
-  padding: 3px 8px;
+  font-size: 0.6rem;
+  padding: 2px 7px;
+  letter-spacing: 0.04em;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  color: var(--ink-2);
 }
 
-.game-play {
-  padding: 10px 18px;
-  min-height: 44px;
+.game-tags .tag-daily {
+  background: color-mix(in srgb, var(--gold) 25%, transparent);
+  color: color-mix(in srgb, var(--gold) 40%, var(--ink));
+}
+
+/* Main: a tonal pill (the theme colour, light), as Android lists do. */
+.btn-tonal {
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  background: color-mix(in srgb, var(--primary) 14%, var(--surface));
+  color: var(--primary);
+}
+
+.btn-tonal:active {
+  background: color-mix(in srgb, var(--primary) 24%, var(--surface));
 }
 
 /* Main tapped: the button shows a spinner straight away while the game loads; other Main
@@ -938,6 +1518,12 @@ html.appswarga-fullscreen.aw-close-visible .screen {
   border-right-color: transparent;
 }
 
+.btn-tonal.is-launching::after {
+  border-color: var(--primary);
+  border-right-color: transparent;
+}
+
+body.launching .game-row,
 body.launching .game-play,
 body.launching #continue-btn {
   pointer-events: none;
@@ -947,41 +1533,58 @@ body.launching #continue-btn {
   to { rotate: 360deg; }
 }
 
-/* Akan Datang: the same card, faded, and nothing to press. */
-.game-card.soon {
-  grid-template-columns: 56px 1fr;
-  background: color-mix(in srgb, var(--surface) 55%, transparent);
-  box-shadow: none;
+/* Akan Datang: faded, nothing to press. */
+.game-row.soon {
+  cursor: default;
 }
 
-.game-card.soon .game-icon {
+.game-row.soon .game-icon {
   filter: grayscale(0.85);
   opacity: 0.55;
 }
 
-.game-card.soon h3,
-.game-card.soon .game-desc {
-  opacity: 0.7;
+.game-row.soon h3,
+.game-row.soon .game-desc,
+.game-row.soon .game-tags {
+  opacity: 0.6;
+}
+
+.game-row.soon:active {
+  background: none;
 }
 
 .tag-soon {
+  font-size: 0.6rem;
   background: color-mix(in srgb, var(--gold) 25%, transparent);
   color: color-mix(in srgb, var(--gold) 40%, var(--ink));
+}
+
+/* Nothing matches the search. */
+.list-empty {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 36px 16px;
+  text-align: center;
+  color: var(--ink-2);
+}
+
+.list-empty p {
+  margin: 0;
+}
+
+.list-empty-title {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.list-empty .btn {
+  margin-top: 12px;
 }
 
 .screen-hub .app-version {
   margin-top: auto;
   padding-top: 24px;
-}
-
-/* Pasang aplikasi (js/install.js): only when the browser can install the hub as an app. */
-.install-btn {
-  margin-bottom: 18px;
-}
-
-.install-btn svg {
-  width: 20px;
-  height: 20px;
 }
 
 /* How to install, in the help dialog: not inside AppsWarga, nor in the installed app. */
@@ -990,16 +1593,8 @@ html.as-app .install-help {
   display: none;
 }
 
-/* Narrow phones: buttons go under the text, full width, and the points stats under the total. */
+/* Narrow phones: Sambung's button under its text, a smaller title. */
 @media (max-width: 379px) {
-  .points-card {
-    grid-template-columns: 1fr;
-  }
-
-  .points-stats {
-    text-align: left;
-  }
-
   .continue-card {
     flex-wrap: wrap;
   }
@@ -1008,12 +1603,7 @@ html.as-app .install-help {
     width: 100%;
   }
 
-  .game-card {
-    grid-template-columns: 56px 1fr;
-  }
-
-  .game-play {
-    grid-column: 1 / -1;
-    width: 100%;
+  .appbar-title h1 {
+    font-size: 1.3rem;
   }
 }
