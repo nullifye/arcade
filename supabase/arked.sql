@@ -75,7 +75,13 @@ insert into public.arked_games (id, name, max_points, max_points_per_sec) values
   -- combo of up to ×4 (Susah: 120 at most). Each sum shows for at least 0.9 s (written out, then
   -- the feedback), so a 60 s round has at most 66 sums (a Nyawa round stops at 60): 7,920 at
   -- most, and 120 / 0.9 s ≈ 133 a second.
-  ('congak',    'Congak Matematik', 8000, 150)
+  ('congak',    'Congak Matematik', 8000, 150),
+  -- Letup-Letup: 5 a bird × a chain of at most ×5, +15 / +30 a special made, +50 to +100 a
+  -- special combo, +3 a bird freed, × a move combo of at most ×3, +3 a second saved calling a row
+  -- down early (only after a pop since the last row). A move that pops takes at least 0.45 s and
+  -- seconds are rounded up, so the best opening bursts (worst tested ~218 in the first second)
+  -- stay under 300 a second; whole games peak around 19 a second. The score is capped at 50,000.
+  ('letup-letup', 'Letup-Letup',  50000, 300)
 on conflict (id) do update
   set name = excluded.name,
       max_points = excluded.max_points,

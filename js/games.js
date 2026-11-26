@@ -109,6 +109,15 @@ export const GAMES = [
     status: 'live',
   },
   {
+    id: 'letup-letup',
+    name: 'Letup-Letup',
+    desc: 'Sejajarkan tiga burung sama warna sebelum kelas penuh.',
+    url: 'https://nullifye.github.io/warga-games/letup-letup/',
+    icon: 'icons/letup-letup.svg',
+    tags: ['Arked', 'Harian'],
+    status: 'live',
+  },
+  {
     id: 'silang-kata',
     name: 'Silang Kata',
     desc: 'Isi petak silang kata dengan istilah kampus dan budaya.',
