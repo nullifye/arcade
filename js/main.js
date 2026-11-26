@@ -13,6 +13,7 @@ import {
   appsWargaAllowedUserTypes,
   appsWargaSessionError,
   closeMiniApp,
+  inAppsWarga,
   notifyAppReady,
 } from './appswarga.js';
 
@@ -172,6 +173,32 @@ function saveProfileFromForm(e) {
   const next = afterProfile;
   afterProfile = null;
   if (next) next();
+}
+
+// ---------- Back inside AppsWarga ----------
+
+/**
+ * AppsWarga's Back (the swipe in from the left edge, Android's back, the header's back) closes
+ * what is open first: a dialog, then the avatar's menu; with nothing open it leaves the webapp.
+ * Through the bridge's setBackHandler (version 3), which turns off on every page load, so it is
+ * turned on again when the hub comes back from a game. Older AppsWarga builds don't have it and
+ * Back simply leaves, as before.
+ */
+function initBack() {
+  window.addEventListener('appswargaBack', () => {
+    const dialog = [...document.querySelectorAll('dialog[open]')].at(-1);
+    if (dialog) dialog.close('cancel');
+    else if (!$('#profile-menu').hidden) closeProfileMenu({ focus: true });
+    else closeMiniApp();
+  });
+  const enable = () => {
+    try {
+      Promise.resolve(window.appswarga.callHandler('setBackHandler', { enabled: true })).catch(() => {});
+    } catch { /* an older AppsWarga: Back leaves */ }
+  };
+  if (inAppsWarga()) enable();
+  else window.addEventListener('appswargaReady', enable, { once: true });
+  window.addEventListener('pageshow', (e) => { if (e.persisted && inAppsWarga()) enable(); });
 }
 
 // ---------- the avatar's menu ----------
@@ -600,6 +627,7 @@ function init() {
     openProfile();
   });
   initProfileMenu();
+  initBack();
   initSearch();
   $('#profile-form').addEventListener('submit', saveProfileFromForm);
   $('#pf-cancel').addEventListener('click', () => $('#dlg-profile').close('cancel'));

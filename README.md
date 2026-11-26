@@ -15,6 +15,10 @@ pinned at the top while the list scrolls.
   it to change it), then at the right the help button and the player's avatar. The avatar opens a
   menu: the profile, **Ubah profil**, and inside AppsWarga **Keluar** (it closes the
   webapp). A tap outside, Esc or scrolling closes it; ↑ ↓ move between its items.
+- **Back inside AppsWarga**: AppsWarga's own Back (the swipe in from the left edge, Android's back
+  button) leaves the webapp from the hub, as the hub adds no history of its own. With a dialog or
+  the avatar's menu open, it closes that first (the bridge's `setBackHandler`, turned on again
+  when coming back from a game). The hub has no swipe gestures of its own, as the bridge asks.
 - **Search** ("Cari permainan"): every word typed must start a word of a game's name,
   description, labels or category, ignoring case and accents. Esc or ✕ clears it; "/" jumps to
   it on a keyboard.
@@ -49,7 +53,7 @@ pinned at the top while the list scrolls.
   only when the browser can install it right now (Chrome, Edge, Samsung Internet), never inside
   AppsWarga or in the installed app; the help dialog tells iPhone users to use Kongsi ▸ Tambah ke
   Skrin Utama. There is no service worker, so the installed app needs a connection, like the site.
-- **The version** at the bottom (`index.html`, now 1.11); tap it for a fresh reload. Bump it when
+- **The version** at the bottom (`index.html`, now 1.12); tap it for a fresh reload. Bump it when
   the hub changes.
 
 ## Run locally
