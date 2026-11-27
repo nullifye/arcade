@@ -101,17 +101,21 @@ nickname, category and campus), so every game gets the same Hari Ini / Keseluruh
 boards from `arked_top(p_game, …)` and `arked_campus_rank(p_game, …)`. `p_game` null covers
 all games.
 
-- `arked_record(…, p_daily, p_play_date)`: a game with a daily challenge (Teka Kata, Duga Kata)
-  sends `p_daily = true`; the database allows one per player, game and day.
+- `arked_record(…, p_daily, p_play_date)`: a game's one-try Cabaran Harian (Teka Kata, Duga Kata,
+  Congak Matematik, Letup-Letup) sends `p_daily = true` with the challenge's day; the database
+  allows one per player, game and day. Kejar Lapan's Harian can be run all day, so its runs are
+  ordinary rounds ([game contract](docs/game-contract.md), section 6).
 - At most one round per player and game every 10 seconds.
 - Each round is capped by its game's `arked_games.max_points` and `max_points_per_sec` × seconds.
   The SQL explains each limit from the game's rules; keep it in step with any scoring change.
 
 ## Adding a game
 
-Games live in the `warga-games` repo (`https://nullifye.github.io/warga-games/<game>/`); its
-README covers building one with the shared code. A game on another host (e.g. Vercel) works
-too: copy `js/shared-store.js`, honour `?dari=arked`, and call `arked_record`.
+Every game, wherever it is hosted, follows the **[game contract](docs/game-contract.md)**:
+registering it, `?dari=arked` and going back, AppsWarga's bridge, the shared `arked.*` values,
+and recording rounds with `arked_record`. Games live in the `warga-games` repo
+(`https://nullifye.github.io/warga-games/<game>/`), whose `shared/` folder is the kit that
+implements the contract; a game on another host (e.g. Vercel) copies that folder.
 
 1. Add an entry to `js/games.js` (`id`, `name`, `desc`, `url`, `icon`, a `category` from
    `CATEGORIES`, up to 3 `tags` (`Harian` if it has a Cabaran Harian),
